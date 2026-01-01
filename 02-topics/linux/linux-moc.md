@@ -5,8 +5,8 @@
 ## Arch Linux
 
 ### Управление пакетами
-- [[pacman-основные-команды]]
-- [[aur-yay-команды]]
+- [[pacman-basic-commands]]
+- [[aur-yay-commands]]
 - [[arch-maintenance]]
 
 ### Система

@@ -26,8 +26,8 @@ type: note
 
 ## Связанные заметки
 
-- [[pacman-основные-команды]]
-- [[aur-yay-команды]]
+- [[pacman-basic-commands]]
+- [[aur-yay-commands]]
 - [[system-backup-strategy]]
 
 ## Источники

@@ -46,7 +46,7 @@ sudo pacman -Scc # Полная очистка кэша
 
 ## Связанные заметки
 
-- [[aur-yay-команды]]
+- [[aur-yay-commands]]
 - [[arch-maintenance]]
 - [[arch-troubleshooting]]
 
