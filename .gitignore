@@ -1,0 +1,10 @@
+# Obsidian workspace settings
+.obsidian/
+
+# Trash
+.trash/
+
+# System files
+.DS_Store
+Thumbs.db
+
