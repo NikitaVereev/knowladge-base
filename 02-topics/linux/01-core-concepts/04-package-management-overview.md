@@ -1,75 +1,107 @@
----
-created: 2026-01-05
-updated: 2026-01-05
-type: reference
----
+# Package Management Overview
 
-# Управление пакетами
+## Overview
 
-## Основы
+Управление пакетами - это способ установки, обновления и удаления программного обеспечения в Linux. Разные дистрибутивы используют разные пакетные менеджеры.
 
-**Пакет** — архив с программой, библиотекой или модулем.
+**Что вы узнаете:**
+- Что такое пакеты, менеджеры, репозитории и зависимости
+- apt (Debian/Ubuntu) - основные команды
+- dnf (Fedora/RHEL) - основные команды
+- pacman (Arch Linux) - основные команды
+- Установка из исходников (./configure, make)
+- pip (Python) и npm (Node.js) пакеты
+- Решение проблем с зависимостями
 
-**Пакетный менеджер** — инструмент для установки, обновления, удаления пакетов.
+## Prerequisites
 
-**Репозиторий** — сервер, хранящий пакеты.
+Перед этим разделом нужно:
+- Понимание файловой системы ([[./01-filesystem-hierarchy.md|Filesystem Hierarchy]])
+- Знание пользователей и sudo ([[./02-users-groups-permissions.md|Users and Permissions]])
+- Знание сервисов systemd ([[./03-processes-and-services.md|Processes and Services]])
 
-**Зависимости** — другие пакеты, требуемые для работы.
+## Package Management Concepts
 
----
+**Пакет** — архив (обычно .deb, .rpm, или .tar.gz) содержащий программу, библиотеку или модуль.
+
+**Пакетный менеджер** — инструмент для установки, обновления, удаления пакетов (apt, dnf, pacman).
+
+**Репозиторий** — сервер (в интернете), хранящий пакеты (например: archive.ubuntu.com).
+
+**Зависимости** — другие пакеты, требуемые для работы программы (менеджер устанавливает их автоматически).
 
 ## apt (Debian/Ubuntu)
 
-### Базовые команды
+**apt** (Advanced Package Tool) — пакетный менеджер для Debian/Ubuntu.
+
+### Basic Commands
 
 ```bash
-sudo apt update              # обновить список пакетов
+sudo apt update              # обновить список пакетов из репозиториев
 sudo apt upgrade             # обновить установленные пакеты
-sudo apt full-upgrade        # более агрессивное обновление
+sudo apt full-upgrade        # более агрессивное обновление (может удалить пакеты)
 sudo apt install package     # установить пакет
 sudo apt remove package      # удалить пакет (оставляет конфиги)
-sudo apt purge package       # удалить пакет полностью
+sudo apt purge package       # удалить пакет полностью (с конфигами)
 sudo apt autoremove          # удалить неиспользуемые зависимости
 sudo apt search package      # поиск пакета
 sudo apt show package        # информация о пакете
 apt list --installed         # список установленных пакетов
-apt list --upgradable        # пакеты с обновлениями
+apt list --upgradable        # пакеты которые можно обновить
 ```
 
-### Примеры
+### Examples
 
 ```bash
-sudo apt update && sudo apt upgrade -y  # обновить всё
-sudo apt install curl wget git          # установить несколько
-sudo apt remove firefox                 # удалить firefox
-sudo apt autoremove                     # очистить мусор
-sudo apt search python3                 # найти python3 пакеты
+# Обновить систему
+sudo apt update
+sudo apt upgrade -y
+
+# Установить программы
+sudo apt install firefox chromium git vim
+
+# Найти пакет
+apt search python3
+apt search "web server"
+
+# Информация о пакете
+apt show nginx
+# показывает: описание, версия, размер, зависимости и т.д.
+
+# Удалить программу
+sudo apt remove firefox
+
+# Полная очистка
+sudo apt autoremove
+sudo apt clean
 ```
 
-### Проблемы
+### Troubleshooting
 
 ```bash
 # Ошибка: "E: Could not get lock"
+# Apt уже запущен или нужно перезагрузиться
 sudo rm /var/lib/apt/lists/lock
 sudo apt update
 
 # Ошибка: "Some packages could not be installed"
-sudo apt install -f                     # исправить зависимости
+# Сломанные зависимости
+sudo apt install -f
 sudo apt --fix-broken install
 
-# Очистить кэш
-sudo apt clean
-sudo apt autoclean
+# Очистить место
+sudo apt clean              # удалить кэш пакетов
+sudo apt autoclean          # удалить старые версии
 ```
-
----
 
 ## dnf (Fedora/RHEL)
 
-### Базовые команды
+**dnf** (Dandified Yum) — пакетный менеджер для Fedora/RHEL (приемник yum).
+
+### Basic Commands
 
 ```bash
-sudo dnf update              # обновить список и установленные пакеты
+sudo dnf update              # обновить список И установленные пакеты
 sudo dnf install package     # установить пакет
 sudo dnf remove package      # удалить пакет
 sudo dnf search package      # поиск пакета
@@ -77,193 +109,234 @@ sudo dnf info package        # информация о пакете
 sudo dnf list installed      # список установленных
 sudo dnf list upgrades       # пакеты с обновлениями
 sudo dnf autoremove          # удалить неиспользуемые
+sudo dnf groupinstall "name" # установить группу пакетов
 ```
 
-### Примеры
+### Examples
 
 ```bash
-sudo dnf update -y                      # обновить всё
-sudo dnf install curl wget git          # установить несколько
-sudo dnf remove firefox                 # удалить
-sudo dnf groupinstall "Development Tools"  # группа пакетов
+# Обновить систему
+sudo dnf update -y
+
+# Установить программы
+sudo dnf install firefox vim git
+
+# Группы пакетов
+sudo dnf groupinstall "Development Tools"
+sudo dnf groupinstall "GNOME Desktop"
+
+# Удалить
+sudo dnf remove firefox
+
+# Информация
+dnf info nginx
+dnf search python
 ```
 
-### Репозитории
+### Repositories
 
 ```bash
-sudo dnf repolist            # список репозиториев
-sudo dnf repolist all        # включая отключённые
+sudo dnf repolist              # список включённых репозиториев
+sudo dnf repolist all          # все репозитории (включая отключённые)
 sudo dnf config-manager --add-repo URL  # добавить репозиторий
+sudo dnf config-manager --disable repo  # отключить репозиторий
 ```
-
----
 
 ## pacman (Arch Linux)
 
-### Базовые команды
+**pacman** — пакетный менеджер для Arch Linux (очень быстрый и простой).
+
+### Basic Commands
 
 ```bash
 sudo pacman -Syu             # обновить всё (S=sync, y=refresh, u=upgrade)
 sudo pacman -S package       # установить пакет
-sudo pacman -R package       # удалить пакет
-sudo pacman -Rs package      # удалить + зависимости
+sudo pacman -R package       # удалить пакет (оставляет зависимости)
+sudo pacman -Rs package      # удалить пакет + зависимости
 sudo pacman -Ss package      # поиск пакета
 sudo pacman -Si package      # информация о пакете
 pacman -Q                    # список установленных
 pacman -Qu                   # пакеты с обновлениями
-sudo pacman -Sc              # очистить кэш
+sudo pacman -Sc              # очистить кэш старых версий
 ```
 
-### Примеры
+### Examples
 
 ```bash
-sudo pacman -Syu                        # обновить систему
-sudo pacman -S firefox chromium         # установить браузеры
-sudo pacman -R firefox                  # удалить firefox
-sudo pacman -Ss "python"                # найти python пакеты
-```
+# Обновить систему
+sudo pacman -Syu
 
-### Очистка
+# Установить программы
+sudo pacman -S firefox vim git
 
-```bash
+# Удалить с зависимостями
+sudo pacman -Rs firefox
+
+# Полная очистка
 sudo pacman -Sc              # удалить неиспользуемые версии
 sudo pacman -Scc             # очистить весь кэш (осторожно!)
-sudo pacman -Rs $(pacman -Qdtq)  # удалить все orphan'ы
+sudo pacman -Rs $(pacman -Qdtq)  # удалить orphaned пакеты
 ```
 
----
+## Comparison Table
 
-## Таблица сравнения
+| Задача | apt (Debian) | dnf (Fedora) | pacman (Arch) |
+|--------|---|---|---|
+| Обновить систему | `apt update && apt upgrade` | `dnf update` | `pacman -Syu` |
+| Установить | `apt install PKG` | `dnf install PKG` | `pacman -S PKG` |
+| Удалить | `apt remove PKG` | `dnf remove PKG` | `pacman -R PKG` |
+| Поиск | `apt search TERM` | `dnf search TERM` | `pacman -Ss TERM` |
+| Информация | `apt show PKG` | `dnf info PKG` | `pacman -Si PKG` |
+| Список установленных | `apt list --installed` | `dnf list installed` | `pacman -Q` |
+| Очистка | `apt autoremove` | `dnf autoremove` | `pacman -Rs orphans` |
 
-| Задача | apt | dnf | pacman |
-|--------|-----|-----|--------|
-| Обновить | `apt upgrade` | `dnf upgrade` | `pacman -Syu` |
-| Установить | `apt install` | `dnf install` | `pacman -S` |
-| Удалить | `apt remove` | `dnf remove` | `pacman -R` |
-| Поиск | `apt search` | `dnf search` | `pacman -Ss` |
-| Информация | `apt show` | `dnf info` | `pacman -Si` |
-| Очистка | `apt autoremove` | `dnf autoremove` | `pacman -Rs` |
+## Installing from Source
 
----
-
-## Поиск пакетов онлайн
-
-```
-Debian/Ubuntu: https://packages.debian.org, https://packages.ubuntu.com
-Fedora: https://packages.fedoraproject.org
-Arch: https://archlinux.org/packages/
-```
-
----
-
-## Установка из исходников
-
-Если пакета нет в репозитории:
+Если пакета нет в репозитории, можно установить из исходного кода:
 
 ```bash
-# Загрузить
+# 1. Скачать архив
 wget https://example.com/package.tar.gz
 tar -xzf package.tar.gz
 cd package
 
-# Собрать и установить
-./configure          # настройка
-make                 # компиляция
-sudo make install    # установка
+# 2. Собрать
+./configure              # настройка (проверяет зависимости)
+make                     # компиляция
+sudo make install        # установка
+
+# 3. Очистить (опционально)
+make clean               # удалить объектные файлы
+cd .. && rm -rf package  # удалить исходный код
 ```
 
-**Требования:**
+### Build Tools
+
+Требуется пакет с инструментами для компиляции:
+
 ```bash
 # Ubuntu/Debian
 sudo apt install build-essential
 
-# Fedora
+# Fedora/RHEL
 sudo dnf groupinstall "Development Tools"
 
 # Arch
 sudo pacman -S base-devel
 ```
 
----
-
-## pip (Python пакеты)
+## pip - Python Package Manager
 
 ```bash
-pip install package         # установить
-pip install package==1.0    # конкретную версию
+pip install package              # установить пакет
+pip install package==1.2.3       # конкретную версию
 pip install -r requirements.txt  # из файла
-pip list                    # список установленных
-pip search package          # поиск
-pip uninstall package       # удалить
+pip list                         # список установленных
+pip show package                 # информация о пакете
+pip uninstall package            # удалить пакет
+pip search package               # поиск (может не работать)
+pip freeze > requirements.txt    # сохранить список в файл
 ```
 
-**Виртуальное окружение:**
-```bash
-python3 -m venv env         # создать окружение
-source env/bin/activate     # активировать
-pip install package         # устанавливать в окружение
-deactivate                  # выключить
-```
+### Virtual Environments
 
----
-
-## npm (Node.js пакеты)
+**Виртуальное окружение** — изолированная среда Python для проекта:
 
 ```bash
-npm install package         # установить локально
-npm install -g package      # установить глобально
-npm list                    # список установленных
-npm search package          # поиск
-npm uninstall package       # удалить
-npm update                  # обновить
+python3 -m venv env              # создать окружение (env папка)
+source env/bin/activate          # активировать (на Linux/Mac)
+env\Scripts\activate             # активировать (на Windows)
+pip install -r requirements.txt  # устанавливать в окружение
+deactivate                       # выключить окружение
 ```
 
----
+**Зачем нужны:**
+- Разные проекты могут требовать разные версии одного пакета
+- Не загрязняем систему Python
+- Легче поделиться проектом (requirements.txt)
 
-## Проблемы и решения
+## npm - Node.js Package Manager
+
+```bash
+npm install package              # установить локально (в папку node_modules)
+npm install -g package           # установить глобально (для всей системы)
+npm install                      # установить из package.json
+npm list                         # список установленных
+npm search package               # поиск пакета
+npm update package               # обновить пакет
+npm uninstall package            # удалить пакет
+npm init                         # создать package.json для проекта
+```
+
+## Finding Packages Online
+
+Если не знаете точное название пакета:
+
+**Debian/Ubuntu:**
+- https://packages.debian.org
+- https://packages.ubuntu.com
+
+**Fedora/RHEL:**
+- https://packages.fedoraproject.org
+
+**Arch:**
+- https://archlinux.org/packages/
+
+**Python:**
+- https://pypi.org
+
+**Node.js:**
+- https://www.npmjs.com
+
+## Troubleshooting
 
 ### Не могу найти пакет
 
 ```bash
-# 1. Обновить список репозиториев
-sudo apt update             # apt
-sudo dnf update             # dnf
+# 1. Обновите список пакетов
+sudo apt update                  # apt
+sudo dnf update                  # dnf
 
-# 2. Поискать с другим названием
-apt search python           # может быть python3
+# 2. Поищите с другим названием
+apt search "web server"          # apt
+dnf search python                # dnf
+
+# 3. Проверьте что репозитории включены
+sudo dnf repolist                # dnf
 ```
 
 ### Конфликт версий
 
 ```bash
-# apt
-sudo apt install package=version
+# apt: установить конкретную версию
+sudo apt install package=1.2.3
 
-# dnf
-sudo dnf install package-version
+# dnf: установить конкретную версию
+sudo dnf install package-1.2.3
 
-# pacman
-sudo pacman -S package=version
+# pacman: обычно версия одна
+sudo pacman -S package
 ```
 
 ### Сломанные зависимости
 
 ```bash
 # apt
-sudo apt --fix-broken install
 sudo apt install -f
+sudo apt --fix-broken install
 
 # dnf
 sudo dnf install -y --skip-broken
+sudo dnf install -x package --skip-broken
 
 # pacman
 sudo pacman -Syyu
 ```
 
-### Откатить обновление
+### Нужна версия которая была раньше
 
 ```bash
-# apt: посмотреть историю
+# apt: проверить историю
 sudo apt full-upgrade --simulate
 sudo apt install package=old_version
 
@@ -271,31 +344,32 @@ sudo apt install package=old_version
 sudo dnf history
 sudo dnf downgrade package
 
-# pacman: посмотреть в архиве
+# pacman: посмотреть кэш
+ls /var/cache/pacman/pkg/package-*
 sudo pacman -U /var/cache/pacman/pkg/package-old_version.pkg.tar.zst
 ```
 
-### Очистить место
+### Много места занято
 
 ```bash
-# Удалить кэш
+# Очистить кэш пакетов
 sudo apt clean               # apt
 sudo dnf clean all           # dnf
 sudo pacman -Sc              # pacman
 
-# Удалить старые версии
+# Удалить неиспользуемые пакеты
 sudo apt autoremove          # apt
 sudo dnf autoremove          # dnf
 sudo pacman -Rs $(pacman -Qdtq)  # pacman
 ```
 
----
-
-## Шпаргалка
+## Cheat Sheet
 
 ```bash
 # Обновление системы
 sudo apt update && sudo apt upgrade -y
+sudo dnf update -y
+sudo pacman -Syu
 
 # Установить программу
 sudo apt install program
@@ -307,19 +381,66 @@ apt search term
 dnf search term
 pacman -Ss term
 
+# Информация о пакете
+apt show package
+dnf info package
+pacman -Si package
+
 # Удалить пакет
 sudo apt remove program
 sudo dnf remove program
 sudo pacman -R program
 
-# Очистить мусор
-sudo apt autoremove
-sudo dnf autoremove
-sudo pacman -Rs $(pacman -Qdtq)
+# Очистить место
+sudo apt autoremove && sudo apt clean
+sudo dnf autoremove && sudo dnf clean all
+sudo pacman -Rs $(pacman -Qdtq) && sudo pacman -Sc
+
+# Python
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+deactivate
+
+# Node.js
+npm install                  # из package.json
+npm install package          # конкретный пакет
+npm list                     # что установлено
 ```
 
----
+## Key Takeaways
 
-## Дальше
+- **apt** — для Debian/Ubuntu (самый популярный)
+- **dnf** — для Fedora/RHEL (enterprise)
+- **pacman** — для Arch Linux (простой и быстрый)
+- **apt update** — обновить список пакетов (НУЖНО ДО УСТАНОВКИ!)
+- **зависимости** — менеджер устанавливает автоматически
+- **pip/npm** — для языков программирования (Python, Node.js)
+- **из исходников** — ./configure, make, make install (если нет в репо)
 
-[Специфика дистрибутивов](../02-distro-specific/README.md) или [Администрирование](../03-system-administration/README.md)
+## Related
+
+Предыдущий шаг:
+- [[./03-processes-and-services.md|Processes and Services]] — управление сервисами
+
+Следующие шаги:
+- [[../02-distro-specific/README.md|Distro-Specific]] — углубленные инструкции для дистрибутива
+- [[../03-system-administration/README.md|System Administration]] — администрирование
+
+Контекст:
+- [[./README.md|Core Concepts Index]] — полный индекс этого раздела
+
+## See Also
+
+Встроенная справка:
+- `apt help` — справка по apt
+- `man apt` — полная справка по apt
+- `dnf help` — справка по dnf
+- `man pacman` — справка по pacman
+
+Онлайн ресурсы:
+- [Debian Package Management](https://wiki.debian.org/PackageManagement) — Debian Wiki
+- [Fedora Package Management](https://docs.fedoraproject.org/en-US/quick-docs/installing-software/) — Fedora docs
+- [Arch Pacman](https://wiki.archlinux.org/title/Pacman) — Arch Wiki
+- [PyPI - Python Package Index](https://pypi.org) — репо Python пакетов
+- [npm Registry](https://www.npmjs.com) — репо Node.js пакетов
