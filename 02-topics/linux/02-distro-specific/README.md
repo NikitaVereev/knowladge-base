@@ -6,23 +6,23 @@
 
 ## 🎯 Выбери свой дистрибутив
 
-### [arch-linux](./arch-linux/README.md)
+### Arch
 Arch Linux, Manjaro и производные.
 
-- [01-installation.md](./arch-linux/01-installation.md) — установка Arch
-- [02-pacman-guide.md](./arch-linux/02-pacman-guide.md) — pacman и управление пакетами
-- [03-aur-guide.md](./arch-linux/03-aur-guide.md) — AUR (Arch User Repository)
-- [04-maintenance.md](./arch-linux/04-maintenance.md) — обслуживание системы
-- [05-troubleshooting.md](./arch-linux/05-troubleshooting.md) — решение проблем
+- **01-installation** — установка Arch
+- **02-pacman-guide** — pacman и управление пакетами
+- **03-aur-guide** — AUR (Arch User Repository)
+- **04-maintenance** — обслуживание системы
+- **05-troubleshooting** — решение проблем
 
-### [ubuntu-debian](02-topics/linux/02-distro-specific/ubuntu-linux/README.md)
+### Ubuntu
 Ubuntu, Debian, Linux Mint и производные.
 
-- [01-installation.md](02-topics/linux/02-distro-specific/ubuntu-linux/01-installation.md) — установка Ubuntu/Debian
-- [02-apt-guide.md](02-apt-guide.md) — apt и управление пакетами
-- [03-ppa-guide.md](03-ppa-guide.md) — PPAs и репозитории
-- [04-maintenance.md](02-topics/linux/02-distro-specific/ubuntu-linux/04-maintenance.md) — обслуживание системы
-- [05-troubleshooting.md](./ubuntu-linux/05-troubleshooting.md) — (опционально) дополнительные решения
+- **01-installation** — установка Ubuntu/Debian
+- **02-apt-guide** — apt и управление пакетами
+- **03-ppa-guide** — PPAs и репозитории
+- **04-maintenance** — обслуживание системы
+- **05-troubleshooting** — (опционально) дополнительные решения
 
 ---
 
