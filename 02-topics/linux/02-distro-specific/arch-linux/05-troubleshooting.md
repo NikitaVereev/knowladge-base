@@ -370,4 +370,4 @@ ip addr                      # сетевые интерфейсы
 
 ## 🔗 ДАЛЬШЕ
 
-[Ubuntu/Debian специфика](../ubuntu-debian/README.md)
+[Ubuntu/Debian специфика](02-topics/linux/02-distro-specific/ubuntu-linux/README.md)

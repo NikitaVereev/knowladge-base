@@ -15,14 +15,14 @@ Arch Linux, Manjaro и производные.
 - [04-maintenance.md](./arch-linux/04-maintenance.md) — обслуживание системы
 - [05-troubleshooting.md](./arch-linux/05-troubleshooting.md) — решение проблем
 
-### [ubuntu-debian](./ubuntu-debian/README.md)
+### [ubuntu-debian](02-topics/linux/02-distro-specific/ubuntu-linux/README.md)
 Ubuntu, Debian, Linux Mint и производные.
 
-- [01-installation.md](./ubuntu-debian/01-installation.md) — установка Ubuntu/Debian
-- [02-apt-guide.md](./ubuntu-debian/02-apt-guide.md) — apt и управление пакетами
-- [03-ppa-guide.md](./ubuntu-debian/03-ppa-guide.md) — PPAs и репозитории
-- [04-maintenance.md](./ubuntu-debian/04-maintenance.md) — обслуживание системы
-- [05-troubleshooting.md](./ubuntu-debian/05-troubleshooting.md) — (опционально) дополнительные решения
+- [01-installation.md](02-topics/linux/02-distro-specific/ubuntu-linux/01-installation.md) — установка Ubuntu/Debian
+- [02-apt-guide.md](02-apt-guide.md) — apt и управление пакетами
+- [03-ppa-guide.md](03-ppa-guide.md) — PPAs и репозитории
+- [04-maintenance.md](02-topics/linux/02-distro-specific/ubuntu-linux/04-maintenance.md) — обслуживание системы
+- [05-troubleshooting.md](./ubuntu-linux/05-troubleshooting.md) — (опционально) дополнительные решения
 
 ---
 
@@ -51,4 +51,4 @@ Ubuntu, Debian, Linux Mint и производные.
 
 **Используете Arch?** → [arch-linux](./arch-linux/README.md)
 
-**Используете Ubuntu или Debian?** → [ubuntu-debian](./ubuntu-debian/README.md)
+**Используете Ubuntu или Debian?** → [ubuntu-linux](./ubuntu-linux/README.md)
