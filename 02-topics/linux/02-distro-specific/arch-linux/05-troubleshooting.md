@@ -1,373 +1,232 @@
----
-created: 2026-01-06
-updated: 2026-01-06
-type: reference
----
+# Arch Troubleshooting
 
-# Решение проблем Arch Linux
+## Overview
 
-## 🚨 ПОСЛЕ ОБНОВЛЕНИЯ СИСТЕМА НЕ ЗАГРУЖАЕТСЯ
+Решение типичных проблем Arch Linux.
 
-### Симптомы
-- Черный экран, не загружается
-- "kernel panic"
-- Ошибки initramfs
+## Система не загружается
 
-### РЕШЕНИЕ (через Live USB)
+### Зависает на boot
 
 ```bash
-# 1. Загрузитесь с Arch Live USB
-# 2. В приглашении root@archiso выполните:
-
-# Смонтируйте систему
-sudo mount /dev/sda2 /mnt    # Linux раздел (sda2 - ваш раздел)
-
-# Вход в chroot
-arch-chroot /mnt
-
-# Переинсталлируйте kernel
-sudo pacman -S linux         # стандартный kernel
-# или
-sudo pacman -S linux-lts     # LTS kernel (более стабильный)
+# Перезагрузитесь с USB Live
+# Смонтируйте систему:
+sudo mount /dev/sda2 /mnt
+sudo mount /dev/sda1 /mnt/efi
+sudo arch-chroot /mnt
 
 # Пересоздайте initramfs
-sudo mkinitcpio -P
+mkinitcpio -P
 
-# Переинсталлируйте GRUB
-sudo grub-install /dev/sda
+# Проверьте bootloader
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+### GRUB не запускается
+
+```bash
+# Переустановите GRUB
+sudo grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
 
-# Выход из chroot и перезагрузка
-exit
+### Black screen после загрузки
+
+```bash
+# Может быть GPU проблема
+# Попробуйте ввести команды вслепую:
+# Нажмите Ctrl+Alt+F2 для TTY
+login
+sudo pacman -S linux-lts      # откатитесь на LTS ядро
 sudo reboot
 ```
 
----
+## Нет интернета
 
-## ⚠️ ПОСЛЕ ЧАСТИЧНОГО ОБНОВЛЕНИЯ КОНФЛИКТЫ
-
-### Симптомы
-- "error: target not found"
-- "error: could not satisfy dependencies"
-- Не могу установить ничего
-
-### РЕШЕНИЕ
+### Ethernet не работает
 
 ```bash
-# НИКОГДА не делайте частичное обновление!
-# ВСЕГДА:
-sudo pacman -Syu
-
-# Если уже сломалось, спасение:
-sudo pacman -Syu             # полное обновление
-
-# Если конфликты файлов
-sudo pacman -Syu --overwrite='*'
-
-# Если совсем плохо
-sudo pacman -Syy             # пересинхронизировать репозитории
-sudo pacman -Syu             # попробовать снова
+ip link show                   # список интерфейсов
+sudo ip link set enp0s3 up     # включить интерфейс
+sudo dhclient enp0s3           # получить IP
 ```
 
----
-
-## 🔄 ОТКАТИТЬ ПАКЕТ НА СТАРУЮ ВЕРСИЮ
-
-### Способ 1: Из кэша (если недавно обновлялся)
+### WiFi не работает
 
 ```bash
-# Посмотреть что в кэше
-ls /var/cache/pacman/pkg/ | grep package
+# Проверьте драйверы
+lspci | grep -i network
+lsmod | grep -i wifi
 
-# Установить старую версию
-sudo pacman -U /var/cache/pacman/pkg/package-oldversion.tar.zst
+# Если нужны драйверы
+sudo pacman -S broadcom-wl     # например для Broadcom
+
+# Или используйте iwd
+sudo pacman -S iwd
+sudo systemctl start iwd
+iwctl station wlan0 scan
+iwctl station wlan0 connect SSID
 ```
 
-### Способ 2: Arch Linux Archive
+## Пакет конфликтует
+
+### Ошибка: "conflicting files"
 
 ```bash
-# Установить downgrade инструмент
-sudo pacman -S downgrade
+# Способ 1: Переписать файлы
+sudo pacman -S package --overwrite '*'
 
-# Использовать
-sudo downgrade package
-# Выбрать версию из списка (стрелки, Enter)
+# Способ 2: Удалить конфликтующий пакет
+sudo pacman -R conflicting-package
+sudo pacman -S package
+
+# Способ 3: Найти какой пакет содержит файл
+pacman -Qo /path/to/conflicting/file
 ```
 
-### Способ 3: Вернуться на Btrfs снимок
+## Pacman проблемы
+
+### Pacman зависает
 
 ```bash
-# Если использовали Btrfs snapshots
-sudo btrfs subvolume list /
-sudo btrfs subvolume delete /.snapshots/current
-sudo btrfs subvolume snapshot /.snapshots/backup-20260103 /
-
-# Перезагрузитесь
-sudo reboot
-```
-
----
-
-## 🔒 PACMAN ЗАБЛОКИРОВАН
-
-### Симптомы
-- "error: could not open lock file"
-- pacman зависла при установке
-
-### РЕШЕНИЕ
-
-```bash
-# Посмотреть есть ли другой pacman
-ps aux | grep pacman
-
-# Если есть другой процесс
-sudo kill -9 PID              # убить процесс
-
-# Удалить lock файл
+# В другом терминале:
+sudo pkill -9 pacman
 sudo rm /var/lib/pacman/db.lck
 
-# Попробовать снова
+# Потом попробуйте снова
 sudo pacman -Syu
 ```
 
----
-
-## 🐢 МЕДЛЕННАЯ ЗАГРУЗКА
-
-### Диагностика
+### Ошибка "could not open file"
 
 ```bash
-# Сколько времени загрузка?
-systemd-analyze
-
-# Какие сервисы медленные?
-systemd-analyze blame | head -20
-
-# График зависимостей
-systemd-analyze critical-chain
-```
-
-### РЕШЕНИЕ
-
-```bash
-# Посмотреть какие сервисы включены
-systemctl list-unit-files --state=enabled | grep -E "network|bluetooth|cups"
-
-# Отключить ненужные при загрузке
-sudo systemctl disable network-manager        # если не нужен
-sudo systemctl disable bluetooth              # если не нужен
-sudo systemctl disable cups                   # если не печатаете
-
-# Удалить ненужные пакеты
-sudo pacman -Rns orphan-package
-
-# Очистить кэш
+# Пересоздайте базы данных
 sudo pacman -Sc
+sudo pacman -Syy
+sudo pacman -Syu
 ```
 
----
-
-## 🔨 AUR ПАКЕТ НЕ КОМПИЛИРУЕТСЯ
-
-### РЕШЕНИЕ
+## Нет звука
 
 ```bash
-# 1. Посмотреть полную ошибку
-yay -S package 2>&1 | tail -100
+# Установите audio stack
+sudo pacman -S pipewire wireplumber
+sudo pacman -S pipewire-alsa   # совместимость с ALSA
 
-# 2. Очистить кэш сборки
-cd ~/.cache/yay/package-name
-rm -rf src pkg *.tar.zst
-
-# 3. Проверить зависимости в PKGBUILD
-cat PKGBUILD | grep depends
-
-# 4. Установить зависимости вручную
-yay -S dependency1 dependency2
-
-# 5. Попробовать снова
-yay -S package --rebuild
-
-# 6. Если совсем не помогает
-# Посмотрите в комментариях на AUR
-# Может быть пакет временно сломан
+# Или используйте PulseAudio (старее но стабильнее)
+sudo pacman -S pulseaudio pulseaudio-alsa
 ```
 
----
+## Нет видеодрайверов
 
-## 🎬 VIDEO ДРАЙВЕР НЕ УСТАНОВИЛСЯ
-
-### Диагностика
+### Intel GPU
 
 ```bash
-# Видит ли система GPU?
-lspci | grep -i vga
-
-# Какие драйверы установлены?
-pacman -Qs video
-pacman -Qs nvidia
-pacman -Qs amdgpu
-```
-
-### NVIDIA
-
-```bash
-sudo pacman -S nvidia nvidia-utils
-# или если используете DKMS
-sudo pacman -S nvidia-dkms nvidia-utils
-
-sudo reboot
-```
-
-### AMD
-
-```bash
-sudo pacman -S amdgpu xf86-video-amdgpu
-# или просто
-sudo pacman -S amdgpu
-
-sudo reboot
-```
-
-### Intel
-
-```bash
-sudo pacman -S intel-media-driver libva-intel-driver
-# или
 sudo pacman -S xf86-video-intel
-
-sudo reboot
+# или используйте встроенный моежель (рекомендуется)
 ```
 
----
-
-## 🌐 ИНТЕРНЕТ НЕ РАБОТАЕТ
-
-### Диагностика
+### AMD GPU
 
 ```bash
-# Есть ли сетевые интерфейсы?
-ip link
-
-# Есть ли IP адреса?
-ip addr
-
-# Можно ли пингануть?
-ping 8.8.8.8
-
-# Какой DNS?
-cat /etc/resolv.conf
+sudo pacman -S xf86-video-amdgpu
 ```
 
-### РЕШЕНИЕ для кабеля
+### NVIDIA GPU
 
 ```bash
-# Перезагрузить NetworkManager
-sudo systemctl restart networkmanager
+# Proprietary (требует много места)
+sudo pacman -S nvidia
 
-# Или systemd-networkd
-sudo systemctl restart systemd-networkd
+# Open source (новые NVIDIA)
+sudo pacman -S xf86-video-nouveau
 ```
 
-### РЕШЕНИЕ для WiFi
+## Диск полностью заполнен
 
 ```bash
-# Установить wifi инструменты
-sudo pacman -S iw wpa_supplicant networkmanager
+# Найдите что занимает место
+du -sh /* | sort -rh | head -10
+du -sh ~/.cache/*
 
-# Подключиться
-nmtui                        # интерактивное меню
-# или
-iwctl                        # для iwd
+# Очистьте
+sudo pacman -Scc               # кэш pacman
+sudo journalctl --vacuum=50M   # журналы
+rm -rf ~/.cache/*              # пользовательский кэш
 ```
 
----
-
-## 💾 ФАЙЛОВАЯ СИСТЕМА READ-ONLY
-
-### Симптомы
-- "Read-only file system"
-- Не могу ничего писать на диск
-
-### РЕШЕНИЕ
+## Недостаточно памяти
 
 ```bash
-# Проверить диск
-sudo fsck -n /dev/sda2       # только проверка
+# Уменьшите swap
+sudo swapon --show
+free -h
 
-# Если нужны исправления (через Live USB)
-sudo umount /dev/sda2
-sudo fsck -y /dev/sda2       # исправить
-
-# Если срочно нужно писать
-sudo mount -o remount,rw /
-
-# Перезагрузиться для полного fix
-sudo reboot
+# Отключите ненужные сервисы
+systemctl list-units --type=service --state=running
+sudo systemctl disable service
 ```
 
----
-
-## 🔐 ЗАБЫЛИ ПАРОЛЬ
-
-### РЕШЕНИЕ
+## X/Display Server не запускается
 
 ```bash
-# Загрузитесь с Live USB
+# Проверьте логи
+cat ~/.local/share/xorg/Xvfb.log
+journalctl -u display-manager
+
+# Переустановите X server
+sudo pacman -S xorg xorg-xinit
+
+# Или используйте Wayland (новее)
+sudo pacman -S wayland
+```
+
+## Откат обновления
+
+```bash
+# Если обновление сломало систему
+# Найдите старый пакет в кэше
+ls -la /var/cache/pacman/pkg/package-*
+
+# Откатитесь
+sudo pacman -U /var/cache/pacman/pkg/package-old.pkg.tar.zst
+```
+
+## Kernel Panic
+
+```bash
+# Загрузитесь с USB Live
 
 # Смонтируйте систему
 sudo mount /dev/sda2 /mnt
+sudo arch-chroot /mnt
 
-# Войдите в chroot
-arch-chroot /mnt
+# Откатитесь на предыдущее ядро
+sudo pacman -S linux-lts
 
-# Установите новый пароль
-passwd username              # для обычного пользователя
-# или
-passwd                       # для root
+# Или обновите всю систему
+sudo pacman -Syu
 
-# Выход и перезагрузка
-exit
-sudo reboot
+# Пересоздайте initramfs
+mkinitcpio -P
 ```
 
----
+## Key Takeaways
 
-## 📋 ШПАРГАЛКА TROUBLESHOOTING
+- **Arch Wiki первый помощник** — всегда идите туда
+- **Перезагружайтесь с USB** — если система не загружается
+- **Pacman может зависнуть** — `sudo rm /var/lib/pacman/db.lck`
+- **Откаты возможны** — старые пакеты в `/var/cache/pacman/pkg`
+- **Интернет критичен** — потеря интернета ломает многое
 
-```bash
-# Система не загружается (с Live USB)
-arch-chroot /mnt
-sudo pacman -S linux
-sudo mkinitcpio -P
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+## Related
 
-# Откатить пакет
-sudo pacman -U /var/cache/pacman/pkg/package-old.tar.zst
-sudo downgrade package
+- [[./01-installation.md|Installation]] — если нужна переустановка
+- [[./04-maintenance.md|Maintenance]] — профилактика
+- [[../README.md|Arch Index]] — индекс
 
-# pacman заблокирован
-sudo rm /var/lib/pacman/db.lck
+## See Also
 
-# Медленная загрузка
-systemd-analyze blame
-
-# Диагностика
-journalctl -f                # логи
-systemd-analyze              # время загрузки
-ip addr                      # сетевые интерфейсы
-```
-
----
-
-## 🔗 ВАЖНЫЕ ССЫЛКИ
-
-- **Arch Wiki**: https://wiki.archlinux.org
-- **Arch Forum**: https://bbs.archlinux.org
-- **Troubleshooting**: https://wiki.archlinux.org/title/Troubleshooting
-
----
-
-## 🔗 ДАЛЬШЕ
-
-[Ubuntu/Debian специфика](02-topics/linux/02-distro-specific/ubuntu-linux/README.md)
+- [General troubleshooting](https://wiki.archlinux.org/title/General_troubleshooting)
+- [Boot process](https://wiki.archlinux.org/title/Arch_boot_process)
+- [Systemd](https://wiki.archlinux.org/title/Systemd)

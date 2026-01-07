@@ -1,233 +1,106 @@
----
-created: 2026-01-06
-updated: 2026-01-06
-type: reference
----
+# Ubuntu Troubleshooting
 
-# Решение проблем Ubuntu/Debian
-
-## 🚨 СИСТЕМА НЕ ЗАГРУЖАЕТСЯ (GRUB)
-
-### Симптомы
-- Черный экран с GRUB> приглашением
-- Ошибки при загрузке
-- Попадаете в GRUB shell
-
-### РЕШЕНИЕ (с Live USB)
+## System won't boot
 
 ```bash
-# 1. Загрузитесь с Live USB
-# 2. Откройте терминал
+# Загрузитесь с USB Live
+# Зайдите в GRUB меню
+# Выберите "Advanced options" -> предыдущее ядро
 
-# Смонтируйте Linux раздел
-sudo mount /dev/sda3 /mnt       # sda3 - ваш Linux раздел
-# (проверьте: sudo fdisk -l)
-
-# Если используется LVM
-sudo vgchange -ay               # активировать
-sudo mount /dev/ubuntu-vg/root /mnt
-
-# Смонтируйте системные папки
-sudo mount /dev/sda1 /mnt/boot/efi    # EFI раздел
-sudo mount --bind /dev /mnt/dev
-sudo mount --bind /proc /mnt/proc
-sudo mount --bind /sys /mnt/sys
-
-# Войдите в chroot
-sudo chroot /mnt
-
-# Переинсталлируйте GRUB
-sudo grub-install /dev/sda      # на MBR
-# или для UEFI
-sudo grub-install --efi-directory=/boot/efi /dev/sda
-
-# Пересоздайте конфиг
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-# Выход и перезагрузка
-exit
-sudo reboot
+# Или переустановите GRUB
+sudo mount /dev/sda2 /mnt
+sudo grub-install --root-directory=/mnt /dev/sda
 ```
 
----
-
-## ⚠️ apt ЗАБЛОКИРОВАН
-
-### Симптомы
-- "E: Could not get lock"
-- apt зависла при установке
-
-### РЕШЕНИЕ
+## No internet connection
 
 ```bash
-ps aux | grep apt                # ищем процесс
-sudo killall -9 apt apt-get      # если зависла
+# Проверьте интерфейсы
+ip link show
+sudo ip link set enp0s3 up
 
-sudo rm /var/lib/apt/lists/lock
-sudo apt update
+# Для Ethernet с DHCP
+sudo dhclient enp0s3
+
+# Для WiFi
+nmcli device wifi list
+nmcli device wifi connect SSID password PASSWORD
 ```
 
----
-
-## 🔄 ОТКАТИТЬ ПАКЕТ НА СТАРУЮ ВЕРСИЮ
-
-### Способ 1: Из кэша
+## Update breaks system
 
 ```bash
-ls /var/cache/apt/archives/ | grep package
+# Откатитесь на предыдущее ядро через GRUB
+# Или переустановите broken пакет
+sudo apt install --reinstall broken-package
 
-sudo apt install /var/cache/apt/archives/package_oldversion.deb
+# Или удалите проблемный пакет
+sudo apt remove problem-package
 ```
 
-### Способ 2: Указать версию
+## Snap package issues
 
 ```bash
-apt-cache policy package       # доступные версии
+# Отключите snap (если хотите)
+sudo apt remove snapd
 
-sudo apt install package=version
+# Или переустановите snap
+sudo apt install snapd
+sudo snap refresh
 ```
 
----
-
-## 🐢 МЕДЛЕННАЯ ЗАГРУЗКА
-
-### Диагностика
+## Dependencies broken
 
 ```bash
-# Время загрузки
-systemd-analyze
-
-# Медленные сервисы
-systemd-analyze blame | head -10
-
-# График
-systemd-analyze critical-chain
+sudo apt install -f
+sudo apt --fix-broken install
+sudo apt --fix-missing install
 ```
 
-### РЕШЕНИЕ
+## Disk full
 
 ```bash
-# Отключить ненужные сервисы
-sudo systemctl disable bluetooth
-sudo systemctl disable cups
-sudo systemctl disable avahi-daemon
+du -sh /* | sort -rh
+du -sh ~/.cache/*
 
-# Удалить ненужные пакеты
-sudo apt remove package-name
+sudo apt clean
+sudo apt autoclean
+rm -rf ~/.cache/
 ```
 
----
-
-## 🌐 ИНТЕРНЕТ НЕ РАБОТАЕТ
-
-### Диагностика
+## Grub boot menu
 
 ```bash
-ip link                      # есть ли интерфейсы?
-ip addr                      # есть ли IP?
-ping 8.8.8.8                # можно ли пингануть?
-cat /etc/resolv.conf        # DNS?
+# Если Grub не показывается
+sudo update-grub
+
+# Для переустановки Grub
+sudo grub-install /dev/sda
+sudo update-grub
 ```
 
-### РЕШЕНИЕ
+## Display/Graphics issues
 
 ```bash
-# Перезагрузить сеть
-sudo systemctl restart NetworkManager
-sudo systemctl restart systemd-networkd
+# Обновите видеодрайверы
+sudo ubuntu-drivers autoinstall
 
-# или для кабеля
-sudo systemctl restart networking
+# Или выберите вручную
+ubuntu-drivers devices
+sudo apt install nvidia-driver-535  # например
 ```
 
----
+## Key Takeaways
 
-## 📦 PPA ПРОБЛЕМЫ
+- Ubuntu обычно стабильна (проблемы редки)
+- Всегда есть сервис помощи в GUI
+- Can boot from USB и исправить проблемы
 
-### "Signed by unknown key"
+## Related
 
-```bash
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys KEY_ID
-sudo apt update
-```
+- [[./01-installation.md|Installation]]
+- [[../README.md|Ubuntu Index]]
 
-### PPA конфликтует
+## See Also
 
-```bash
-sudo add-apt-repository --remove ppa:user/ppa-name
-sudo apt update
-sudo ppa-purge ppa:user/ppa-name
-```
-
----
-
-## 💾 ДИСК READ-ONLY
-
-### Симптомы
-- "Read-only file system"
-- Не могу писать на диск
-
-### РЕШЕНИЕ
-
-```bash
-# Проверить диск (через Live USB)
-sudo fsck -n /dev/sda3      # только проверка
-
-# Если нужны исправления
-sudo umount /dev/sda3
-sudo fsck -y /dev/sda3      # исправить
-```
-
----
-
-## 🔐 ЗАБЫЛИ ПАРОЛЬ
-
-### РЕШЕНИЕ
-
-```bash
-# С Live USB
-sudo mount /dev/sda3 /mnt
-sudo chroot /mnt
-
-# Новый пароль для пользователя
-passwd username
-# или для root
-passwd
-
-# Выход
-exit
-sudo reboot
-```
-
----
-
-## 📋 ШПАРГАЛКА
-
-```bash
-# GRUB не работает (с Live USB)
-sudo mount /dev/sda3 /mnt
-sudo mount /dev/sda1 /mnt/boot/efi
-sudo mount --bind /dev /mnt/dev
-sudo mount --bind /proc /mnt/proc
-sudo mount --bind /sys /mnt/sys
-sudo chroot /mnt
-sudo grub-install --efi-directory=/boot/efi /dev/sda
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-# apt заблокирован
-sudo rm /var/lib/apt/lists/lock
-sudo apt update
-
-# Откатить пакет
-apt-cache policy package
-sudo apt install package=version
-
-# Медленная загрузка
-systemd-analyze blame | head -10
-```
-
----
-
-## 🔗 ДАЛЬШЕ
-
-[Arch Linux специфика](../arch-linux/README.md)
+- [Ubuntu Community Help](https://help.ubuntu.com/community/CommonProblems)
