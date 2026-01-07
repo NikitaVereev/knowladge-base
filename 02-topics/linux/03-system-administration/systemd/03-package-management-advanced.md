@@ -1,18 +1,34 @@
----
-created: 2026-01-06
-updated: 2026-01-06
-type: reference
----
+# Package Management Advanced
 
-# 03: Продвинутое управление пакетами
+## NAME
 
-## 🎯 ПРОДВИНУТЫЙ PACKAGE MANAGEMENT
+Продвинутое управление пакетами: поиск, разрешение конфликтов, версионирование и оптимизация.
 
-После базового `pacman -S` и `apt install` есть масса полезных команд.
+## SYNOPSIS
 
----
+```bash
+# Поиск
+pacman -Si package                  # Информация (Arch)
+apt show package                    # Информация (Ubuntu)
 
-## 🔍 ПОИСК И АНАЛИЗ
+# Зависимости
+pacman -Sii package                 # Вся цепь зависимостей (Arch)
+apt-cache depends package           # Зависимости (Ubuntu)
+
+# Версии
+apt list -a package                 # Все версии (Ubuntu)
+pacman -S package=version           # Конкретная версия (Arch)
+
+# Очистка
+sudo paccache -rk 3                 # Оставить 3 версии (Arch)
+sudo apt autoremove                 # Удалить orphans (Ubuntu)
+```
+
+## DESCRIPTION
+
+Администрирование пакетов на продвинутом уровне.
+
+## SEARCHING AND ANALYSIS
 
 ### Поиск зависимостей
 
@@ -20,7 +36,7 @@ type: reference
 # Arch: показать что зависит от пакета
 pacman -Si package | grep "Depends On"
 
-# Ubuntu/Debian: показать зависимости
+# Ubuntu: показать зависимости
 apt show package | grep Depends
 ```
 
@@ -44,9 +60,7 @@ pacman -Qdtq
 sudo apt autoremove --dry-run
 ```
 
----
-
-## 🔧 ADVANCED PACMAN (Arch)
+## ADVANCED PACMAN (Arch)
 
 ### Конфликты пакетов
 
@@ -74,9 +88,7 @@ sudo pacman -Sc
 sudo pacman -Scc
 ```
 
----
-
-## 🔧 ADVANCED APT (Ubuntu/Debian)
+## ADVANCED APT (Ubuntu/Debian)
 
 ### Pinning (приоритеты пакетов)
 
@@ -88,25 +100,21 @@ Pin: release a=unstable
 Pin-Priority: 900
 ```
 
-Теперь Firefox будет установлена из unstable, даже если есть stable версия.
-
 ### Версии и зависимости
 
 ```bash
-# Показать все доступные версии
+# Все доступные версии
 apt list -a mypackage
 
-# Установить конкретную версию
+# Конкретная версия
 sudo apt install mypackage=1.2.3
 
-# Заморозить версию (не обновлять)
+# Заморозить версию
 sudo apt-mark hold mypackage
 sudo apt-mark unhold mypackage
 ```
 
----
-
-## 🐳 СИСТЕМНЫЕ ПАКЕТЫ
+## SYSTEM PACKAGES
 
 ### Настройка перед установкой
 
@@ -114,7 +122,7 @@ sudo apt-mark unhold mypackage
 # dpkg-reconfigure (Ubuntu/Debian)
 sudo dpkg-reconfigure package
 
-# Пример: переконфигурация timezone
+# Переконфигурация timezone
 sudo dpkg-reconfigure tzdata
 ```
 
@@ -128,11 +136,7 @@ sudo deborphan --all
 sudo deborphan --all | xargs sudo apt-get purge
 ```
 
----
-
-## 📊 PACKAGE STATISTICS
-
-### Статистика установки
+## PACKAGE STATISTICS
 
 ```bash
 # Arch: количество пакетов
@@ -141,15 +145,13 @@ pacman -Q | wc -l
 # Ubuntu: количество пакетов
 dpkg -l | wc -l
 
-# Размер всех пакетов
+# Размер всех пакетов (Arch)
 pacman -Si $(pacman -Qq) | grep "Installed Size" | awk '{sum+=$4} END {print sum}'
 ```
 
----
+## TROUBLESHOOTING
 
-## 🚨 ПРОБЛЕМЫ И РЕШЕНИЯ
-
-### Проблема: Broken dependencies
+### Broken dependencies
 
 ```bash
 # Arch: проверить
@@ -159,40 +161,39 @@ pacman -Dk
 sudo apt --fix-broken install
 ```
 
-### Проблема: Package conflicts
+### Package conflicts
 
 ```bash
-# Показать конфликтующие пакеты
+# Показать конфликтующие пакеты (Arch)
 pacman -Qu
 
 # Ubuntu: исправить
 sudo apt install -f
 ```
 
----
-
-## 📋 ШПАРГАЛКА
+## KEY COMMANDS
 
 ```bash
-# Поиск
 pacman -Si package              # Информация (Arch)
 apt show package                # Информация (Ubuntu)
-
-# Зависимости
 pacman -Sii package             # Вся цепь зависимостей
 apt-cache depends package       # Зависимости
-
-# Очистка
 sudo paccache -rk 3             # Оставить 3 версии (Arch)
 sudo apt autoremove             # Удалить orphans (Ubuntu)
-
-# Версии
 apt list -a package             # Все версии (Ubuntu)
 sudo apt-mark hold package      # Заморозить (Ubuntu)
 ```
 
----
+## KEY TAKEAWAYS
 
-## 🔗 ДАЛЬШЕ
+- **Поиск** — понять зависимости
+- **Версии** — контролировать какую версию устанавливать
+- **Очистка** — освобождать место
+- **Конфликты** — разрешать правильно
 
-→ [04-backup-and-recovery.md](./04-backup-and-recovery.md)
+## SEE ALSO
+
+- [[./01-what-is-systemd.md|What is systemd]]
+- [[./02-units-services.md|Units and Services]]
+- [[./04-backup-and-recovery.md|Backup and Recovery]]
+- [[./README.md|systemd README]]

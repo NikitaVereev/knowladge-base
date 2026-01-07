@@ -1,213 +1,211 @@
----
-created: 2026-01-06
-updated: 2026-01-06
-type: reference
----
+# Backup and Recovery
 
-# 04: Резервное копирование и восстановление
+## NAME
 
-## 🎯 ТРИ ОСНОВНЫХ ПОДХОДА
+Резервное копирование и восстановление: стратегии, инструменты и тестирование.
 
-### 1. **rsync** — Традиционный (надежный)
-- Копирование файлов
-- Инкрементальный
-- SSH поддержка
-- Простой
-
-### 2. **restic** — Современный (шифрование)
-- Полное шифрование
-- Облачные backends
-- Incremental snapshots
-- Верификация данных
-
-### 3. **rclone** — Облако-ориентированный
-- Любое облако (S3, B2, Google Drive)
-- Синхронизация
-- Шифрование
-
-**Выбор зависит от вам:**
-- Локальный backup + SSH? → rsync
-- Облако + шифрование? → restic
-- Облако любое? → rclone
-
----
-
-## 📦 rsync: КОПИРОВАНИЕ ФАЙЛОВ
-
-### Базовые команды
+## SYNOPSIS
 
 ```bash
-# Базовая копия
-rsync -av /source/ /destination/
+# Резервное копирование
+sudo rsync -av /home/ /mnt/backup/home/
+sudo tar -czf backup.tar.gz /home/
+sudo dd if=/dev/sda of=backup.img
 
-# С удалением (синхронизация)
-rsync -av --delete /source/ /destination/
-
-# Через SSH
-rsync -avz user@remote:/remote/path/ /local/path/
-
-# С исключением файлов
-rsync -av --exclude="*.log" --exclude="*.tmp" /source/ /dest/
-
-# Драй-ран (без изменений)
-rsync -av --dry-run /source/ /destination/
+# Восстановление
+sudo rsync -av /mnt/backup/home/ /home/
+tar -xzf backup.tar.gz -C /
+sudo dd if=backup.img of=/dev/sda
 ```
 
-### Пример: Backup /home
+## DESCRIPTION
+
+Резервное копирование — важный аспект администрирования. Стратегия 3-2-1: 3 копии, на 2 разных носителях, 1 офсайт.
+
+## BACKUP STRATEGIES
+
+### 3-2-1 Rule
+
+```
+3 копии данных
+2 разных типа носителя (HDD + USB)
+1 копия в другом месте (офсайт)
+```
+
+### Full vs Incremental vs Differential
+
+```
+Full        — полная копия всех данных
+Incremental — только изменения с последней резервной копии
+Differential — только изменения с последней полной копии
+```
+
+## TOOLS
+
+### rsync
+
+Синхронизация и резервное копирование.
 
 ```bash
-#!/bin/bash
-SOURCE="/home/"
-DEST="/mnt/backup/home-$(date +%Y%m%d)"
+# Базовое копирование
+sudo rsync -av /source/ /dest/
 
-rsync -av \
-  --delete \
-  --exclude="Cache" \
-  --exclude=".mozilla/firefox/*/cache*" \
-  $SOURCE $DEST
+# С удалением файлов (опасно!)
+sudo rsync -av --delete /source/ /dest/
 
-echo "Backup complete: $DEST"
+# По сети
+sudo rsync -av -e ssh /home/ user@remote:/backup/
+
+# Только новые файлы
+sudo rsync -av -u /source/ /dest/
 ```
 
-### Cron job
+### tar
+
+Архивирование.
 
 ```bash
-# Редактировать crontab
-crontab -e
+# Создать архив
+tar -czf backup.tar.gz /home/
 
-# Добавить (каждый день в 2 AM)
-0 2 * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1
+# Без сжатия
+tar -cvf backup.tar /home/
+
+# Список содержимого
+tar -tzf backup.tar.gz
+
+# Распаковать
+tar -xzf backup.tar.gz -C /
 ```
 
----
+### dd
 
-## 💾 restic: СОВРЕМЕННЫЙ BACKUP (ШИФРОВАНИЕ)
-
-### Инициализация
+Копирование диска (опасно!).
 
 ```bash
-# Локальный backup
-mkdir /mnt/backup/restic
-restic init -r /mnt/backup/restic
+# Копировать диск
+sudo dd if=/dev/sda of=backup.img bs=4M
 
-# S3 backup (AWS)
-export AWS_ACCESS_KEY_ID="xxx"
-export AWS_SECRET_ACCESS_KEY="yyy"
-restic init -r s3:s3.amazonaws.com/mybucket/restic
+# Восстановить из образа
+sudo dd if=backup.img of=/dev/sda bs=4M
 
-# Backblaze B2
-export B2_ACCOUNT_ID="xxx"
-export B2_ACCOUNT_KEY="yyy"
-restic init -r b2:mybucket:/restic
+# Показывать прогресс
+sudo dd if=/dev/sda of=backup.img bs=4M status=progress
 ```
 
-### Backup команды
+## BACKUP PLAN
+
+### Ежедневно
 
 ```bash
-# Backup директория
-restic -r /mnt/backup/restic backup /home/user/documents
-
-# Backup с исключением
-restic -r /mnt/backup/restic backup \
-  --exclude="*.tmp" \
-  --exclude="Cache" \
-  /home/user
-
-# Множество директорий
-restic -r /mnt/backup/restic backup /home /etc /var
+# Архив важных файлов
+tar -czf ~/backups/daily-$(date +%Y%m%d).tar.gz ~/Documents ~/Photos
 ```
 
-### Restore команды
+### Еженедельно
 
 ```bash
-# Список snapshots
-restic -r /mnt/backup/restic snapshots
-
-# Restore последний
-restic -r /mnt/backup/restic restore latest --target /tmp/restore
-
-# Restore конкретный файл
-restic -r /mnt/backup/restic dump latest /home/user/important.txt > /tmp/important.txt
+# Полная резервная копия домашней директории
+sudo rsync -av /home/ /mnt/weekly-backup/
 ```
 
-### Проверка и обслуживание
+### Ежемесячно
 
 ```bash
-# ✅ ВАЖНО: Проверить целостность
-restic -r /mnt/backup/restic check
-
-# Показать disk usage
-restic -r /mnt/backup/restic stats
-
-# Удалить старые snapshots (старше 90 дней)
-restic -r /repo forget --keep-daily 30 --keep-monthly 12 --prune
+# Образ диска
+sudo dd if=/dev/sda of=/mnt/offsite/monthly-$(date +%Y%m).img bs=4M
 ```
 
----
+## RECOVERY
 
-## 🌐 rclone: ОБЛАЧНОЕ КОПИРОВАНИЕ
-
-### Команды
+### Восстановление файлов
 
 ```bash
-# Копировать локально → облако
-rclone copy /home/user/photos mycloudname:backups/photos
+# Из tar архива
+tar -xzf backup.tar.gz /path/to/file
 
-# Синхронизация (с удалением на облаке)
-rclone sync /home/user/docs mycloudname:backups/docs
-
-# С шифрованием
-rclone copy /home/user mycloudname:encrypted --crypt-filename-encryption standard
-
-# Список файлов
-rclone ls mycloudname:backups/
+# Из rsync резервной копии
+sudo rsync -av /mnt/backup/home/username/file /home/username/
 ```
 
----
-
-## 🎯 3-2-1 RULE (для важных данных)
-
-```
-3 копии total (+ 2 backups)
-2 разные носители
-1 offsite копия
-```
-
-**Реализация:**
-```bash
-# Copy 1: Оригинал на диске
-/home/user/important
-
-# Copy 2: Локальный backup (rsync)
-/mnt/backup/important
-
-# Copy 3: Облачный backup (restic)
-restic backup /home/user/important → S3
-```
-
----
-
-## 📋 ШПАРГАЛКА BACKUP
+### Восстановление диска
 
 ```bash
-# rsync
-rsync -av /source/ /destination/        # Copy
-rsync -av --delete /source/ /dest/      # Sync
+# Из образа dd
+sudo dd if=backup.img of=/dev/sda bs=4M
 
-# restic
-restic init -r /repo                    # Initialize
-restic -r /repo backup /home            # Backup
-restic -r /repo snapshots               # List
-restic -r /repo restore latest /tmp     # Restore
-restic -r /repo check                   # Verify
-
-# rclone
-rclone copy local remote                # Copy
-rclone sync local remote                # Sync
+# Проверить целостность после восстановления
+sudo fsck /dev/sda1
 ```
 
----
+### Восстановление системы
 
-## 🔗 ДАЛЬШЕ
+```bash
+# Загрузиться с Live USB
+# Примонтировать разделы
+sudo mount /dev/sda1 /mnt
 
-→ [05-system-monitoring.md](./05-system-monitoring.md)
+# Восстановить данные
+sudo rsync -av /mnt/backup/ /mnt/
+```
+
+## TESTING
+
+### Тестировать резервные копии
+
+```bash
+# Проверить tar архив
+tar -tzf backup.tar.gz
+
+# Распаковать в тестовую директорию
+tar -xzf backup.tar.gz -C /tmp/test
+
+# Проверить размер файлов
+du -sh /tmp/test
+
+# Сравнить оригинал с восстановленным
+diff -r /home /tmp/test/home
+```
+
+### Тестировать восстановление
+
+```bash
+# На виртуальной машине
+# Восстановить диск из образа
+sudo dd if=backup.img of=/dev/sda bs=4M
+
+# Загрузиться и проверить
+```
+
+## IMPORTANT FILES
+
+```
+/etc/               — конфигурация
+/home/              — пользовательские данные
+/var/www/           — веб-сервер
+/var/lib/mysql/     — БД MySQL
+/opt/               — дополнительное ПО
+```
+
+## COMMON MISTAKES
+
+- ❌ Не тестировать восстановление
+- ❌ Хранить копию рядом с оригиналом
+- ❌ Забыть про шифрование при отправке офсайт
+- ❌ Не архивировать логи и конфиги
+
+## KEY TAKEAWAYS
+
+- **3-2-1 Rule** — основа резервного копирования
+- **Тестировать** — обязательно тестировать восстановление
+- **Автоматизировать** — использовать cron
+- **Шифровать** — особенно офсайт
+- **Документировать** — что и когда резервируется
+
+## SEE ALSO
+
+- [[./01-what-is-systemd.md|What is systemd]]
+- [[./02-units-services.md|Units and Services]]
+- [[./03-package-management-advanced.md|Package Management]]
+- [[./05-system-monitoring.md|System Monitoring]]
+- [[./README.md|systemd README]]

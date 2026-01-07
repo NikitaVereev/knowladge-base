@@ -1,325 +1,219 @@
----
-created: 2026-01-06
-updated: 2026-01-06
-type: reference
----
+# System Monitoring
 
-# 05: Мониторинг и логирование
+## NAME
 
-## 🎯 ПРИНЦИПЫ МОНИТОРИНГА
+Мониторинг системы: ресурсы, производительность, логи и оповещения.
 
-### KISS (Keep It Simple, Stupid)
-- Используйте встроенные инструменты
-- Не переусложняйте
-- Мониторьте важное
-
----
-
-## 📊 ВСТРОЕННЫЕ ИНСТРУМЕНТЫ systemd
-
-### journalctl: логи всего
+## SYNOPSIS
 
 ```bash
-# Последние 50 строк
-journalctl -n 50
+# Ресурсы в реальном времени
+top                                 # процессы и ресурсы
+htop                                # улучшенная версия top
+free -h                             # память
+df -h                               # дисковое пространство
+iostat                              # I/O статистика
 
-# Лайв логи (tail -f)
-journalctl -f
+# Сеть
+ifstat                              # статистика сетевых интерфейсов
+nethogs                             # какой процесс потребляет сеть
 
-# Логи сегодня
-journalctl --since today
-
-# Логи за час
-journalctl --since "1 hour ago"
-
-# Конкретный сервис
-journalctl -u docker
-
-# С ошибками
-journalctl -u docker --priority=err
-
-# ✅ АКТУАЛЬНО: Очистить старые логи
-sudo journalctl --vacuum-time=3d
-
-# ❌ СТАРАЯ КОМАНДА (не работает)
-sudo journalctl --vacuum=3d
-
-# Disk usage
-journalctl --disk-usage
+# Логи
+journalctl                          # все логи
+journalctl -f                       # в реальном времени
+journalctl -p err                   # только ошибки
 ```
 
-### systemd-analyze: производительность
+## DESCRIPTION
+
+Мониторинг системы необходим для выявления проблем до того как они станут критичными.
+
+## CPU MONITORING
+
+### top
 
 ```bash
-# Время загрузки всей системы
-systemd-analyze
-
-# Критический путь (самые медленные сервисы)
-systemd-analyze critical-chain
-
-# Сервисы по времени загрузки
-systemd-analyze blame
-
-# График загрузки (SVG)
-systemd-analyze plot > /tmp/boot.svg
+top                                 # интерактивный мониторинг
+top -p 1234                         # мониторить конкретный процесс
+top -u username                     # мониторить процессы пользователя
 ```
 
-### systemctl: статус сервисов
+### ps
 
 ```bash
-# Список всех сервисов
-systemctl list-units --type=service
-
-# Failed сервисы
-systemctl list-units --state=failed
-
-# Автозагрузка сервисов
-systemctl list-unit-files --state=enabled
-
-# Таймеры
-systemctl list-timers
-
-# Зависимости сервиса
-systemctl list-dependencies docker
+ps aux                              # все процессы
+ps aux | grep process_name          # найти конкретный процесс
+ps aux --sort=-%cpu                 # сортировать по CPU
 ```
 
----
-
-## 📈 СИСТЕМНЫЕ МЕТРИКИ
-
-### Процессы и память
+### Load Average
 
 ```bash
-# Показать процессы
-ps aux | head -20
-
-# Top (интерактивное)
-top
-
-# Занятая память
-free -h
-
-# Per-process память
-ps -eo user,pid,vsz,rss,comm --sort=-rss | head -20
+uptime                              # load average
+cat /proc/loadavg                   # более подробно
+w                                   # кто залогинен и load
 ```
 
-### Диск
+## MEMORY MONITORING
+
+### free
 
 ```bash
-# Использование диска
-df -h
-
-# Размер директории
-du -sh /home/*
-
-# Du с limit (top 10)
-du -sh /home/* | sort -rh | head -10
-
-# Inode использование
-df -i
+free -h                             # память в человеческом виде
+free -m                             # в мегабайтах
+free -g                             # в гигабайтах
+watch -n 1 free -h                  # обновлять каждую секунду
 ```
 
-### Сеть
+### /proc/meminfo
 
 ```bash
-# IP адреса
-ip addr show
-
-# Маршруты
-ip route show
-
-# Netstat (какие порты слушают)
-netstat -tulpn
-
-# ss (быстрее чем netstat)
-ss -tulpn
-
-# Трафик (интерфейсы)
-ip -s link
+cat /proc/meminfo                   # подробная информация
+grep MemAvailable /proc/meminfo     # доступная память
 ```
 
----
+## DISK MONITORING
 
-## 🔧 sysstat: РАСШИРЕННЫЕ МЕТРИКИ
-
-### Команды
+### df (disk free)
 
 ```bash
-# iostat (диск I/O)
-iostat -x 1 5    # Each second, 5 times
-
-# sar (system activity report)
-sar 1 5          # Each second, 5 times
-
-# sar CPU
-sar -u 1 5
-
-# sar memory
-sar -r 1 5
-
-# sar disk
-sar -d 1 5
+df -h                               # доступное место
+df -i                               # inode информация
+df -H                               # десятичные единицы
 ```
 
----
-
-## 📝 ПРИМЕРЫ МОНИТОРИНГА
-
-### Проверить систему
+### du (disk usage)
 
 ```bash
-#!/bin/bash
-# system-check.sh
-
-echo "=== System Health Check ==="
-
-# Uptime
-echo "Uptime: $(uptime -p)"
-
-# Memory
-echo "Memory: $(free -h | grep Mem | awk '{print $3 "/" $2}')"
-
-# Disk
-echo "Disk: $(df -h / | tail -1 | awk '{print $3 "/" $2}')"
-
-# Failed services
-echo "Failed services:"
-systemctl list-units --state=failed
+du -sh /home                        # размер директории
+du -sh /home/*                      # размер подпапок
+du -sh * | sort -rh                 # сортировать по размеру
 ```
 
-### Systemd timer для мониторинга
+### iostat
 
-**Файл:** `/etc/systemd/system/health-check.service`
+```bash
+iostat                              # I/O статистика
+iostat -x 1                         # расширенная, каждую секунду
+iostat -m 1 5                       # в MB, 5 раз
+```
+
+## NETWORK MONITORING
+
+### ifstat
+
+```bash
+ifstat                              # статистика интерфейсов
+ifstat -i eth0                      # конкретный интерфейс
+```
+
+### nethogs
+
+```bash
+sudo nethogs                        # какой процесс потребляет сеть
+sudo nethogs -d 1                   # обновлять каждую секунду
+```
+
+### netstat
+
+```bash
+netstat -tuln                       # открытые порты
+netstat -tan | grep ESTABLISHED     # установленные соединения
+```
+
+## JOURNALCTL MONITORING
+
+### Просмотр логов
+
+```bash
+journalctl                          # все логи
+journalctl -f                       # в реальном времени (follow)
+journalctl -n 50                    # последние 50 строк
+journalctl -p err                   # только ошибки
+journalctl -p 0..3                  # критичные ошибки
+journalctl --since today            # за сегодня
+journalctl --since "1 hour ago"     # за последний час
+```
+
+### Фильтрация
+
+```bash
+journalctl -u ssh                   # логи конкретного сервиса
+journalctl _UID=1000                # логи конкретного пользователя
+journalctl -k                       # логи ядра
+journalctl /usr/bin/myapp           # логи конкретного приложения
+```
+
+## SYSTEM LOAD
+
+### Когда высокая нагрузка
+
+```bash
+top                                 # какой процесс грузит CPU
+iostat                              # I/O активность
+netstat -tan                        # сетевая активность
+journalctl -f -p err                # ошибки в логах
+```
+
+## PERFORMANCE ANALYSIS
+
+### systemd-analyze
+
+```bash
+systemd-analyze                     # время загрузки
+systemd-analyze blame               # какие сервисы долго загружаются
+systemd-analyze critical-chain      # критический путь загрузки
+systemd-analyze plot > boot.svg     # график загрузки
+```
+
+## ALERTING
+
+### Email при проблемах
+
+```bash
+# При высокой нагрузке
+if [ $(uptime | awk -F',' '{print $(NF-2)}' | awk '{print $1}') > 4 ]; then
+    echo "High load detected" | mail -s "Alert" admin@example.com
+fi
+```
+
+### Systemd service for monitoring
 
 ```ini
 [Unit]
-Description=Health Check
+Description=System Monitor
 After=network.target
 
 [Service]
-Type=oneshot
-ExecStart=/usr/local/bin/health-check.sh
-StandardOutput=journal
-StandardError=journal
-```
-
-**Файл:** `/etc/systemd/system/health-check.timer`
-
-```ini
-[Unit]
-Description=Health Check Timer
-Requires=health-check.service
-
-[Timer]
-OnBootSec=5min
-OnUnitActiveSec=1h
-Persistent=true
+Type=simple
+ExecStart=/usr/local/bin/monitor.sh
+Restart=always
 
 [Install]
-WantedBy=timers.target
+WantedBy=multi-user.target
 ```
 
-**Активировать:**
-```bash
-sudo systemctl enable --now health-check.timer
-journalctl -u health-check
-```
+## KEY METRICS
 
----
+- **Load Average** — среднее количество процессов в очереди
+- **CPU Usage** — процент использования процессора
+- **Memory Usage** — процент использования оперативной памяти
+- **Disk I/O** — интенсивность чтения/записи на диск
+- **Network** — пропускная способность сети
+- **Process Count** — количество процессов в системе
 
-## 🛡️ BEST PRACTICES
+## KEY TAKEAWAYS
 
-### 1. Чистить логи регулярно
+- **Регулярно мониторить** — выявлять проблемы рано
+- **Логи первыми** — всегда смотрите journalctl
+- **top/htop** — для быстрой диагностики
+- **Установить alerting** — быть уведомленным о проблемах
+- **Историческая база** — сохранять метрики для анализа
 
-```bash
-# В crontab
-0 3 * * * sudo journalctl --vacuum-time=7d
-```
+## SEE ALSO
 
-### 2. Мониторить важные метрики
-
-```bash
-# Диск (оповещение если > 90%)
-DISK_USAGE=$(df / | tail -1 | awk '{print $5}' | cut -d'%' -f1)
-if [ $DISK_USAGE -gt 90 ]; then
-    echo "ALERT: Disk > 90%"
-fi
-
-# Memory (оповещение если > 80%)
-MEM_USAGE=$(free | grep Mem | awk '{print int($3/$2 * 100)}')
-if [ $MEM_USAGE -gt 80 ]; then
-    echo "ALERT: Memory > 80%"
-fi
-```
-
-### 3. Ограничить размер логов
-
-**Файл:** `/etc/systemd/journald.conf`
-
-```ini
-[Journal]
-SystemMaxUse=2G          # Максимум для всех логов
-SystemMaxFileSize=100M   # Максимум на файл
-RuntimeMaxUse=500M       # Для runtime logs
-```
-
-**Применить:**
-```bash
-sudo systemctl restart systemd-journald
-```
-
----
-
-## 🚨 ПРОБЛЕМЫ И РЕШЕНИЯ
-
-### Проблема: Логи занимают слишком много место
-
-```bash
-# Очистить старые
-sudo journalctl --vacuum-time=3d
-
-# Очистить до размера
-sudo journalctl --vacuum-size=500M
-```
-
-### Проблема: Сервис медленно запускается
-
-```bash
-# Найти медленный сервис
-systemd-analyze blame | head -10
-
-# Подробнее
-systemd-analyze critical-chain
-```
-
----
-
-## 📋 ШПАРГАЛКА МОНИТОРИНГА
-
-```bash
-# Логи
-journalctl -f                    # Лайв
-journalctl -u docker             # Сервис
-journalctl --since "1 hour ago"  # По времени
-sudo journalctl --vacuum-time=3d # Очистить
-
-# Производительность
-systemd-analyze                  # Загрузка
-systemd-analyze blame            # По времени
-ps aux --sort=-%cpu             # Top CPU
-free -h                          # Memory
-df -h                            # Disk
-
-# Сервисы
-systemctl list-units --type=service    # Все
-systemctl list-units --state=failed    # Failed
-systemctl list-timers                  # Таймеры
-```
-
----
-
-## ✅ ЗАВЕРШЕНО!
-
-Вы прошли через все основные аспекты управления Linux системой через systemd.
-
-→ Начните с [01-what-is-systemd.md](./01-what-is-systemd.md) для полного понимания!
+- [[./01-what-is-systemd.md|What is systemd]]
+- [[./02-units-services.md|Units and Services]]
+- [[./03-package-management-advanced.md|Package Management]]
+- [[./04-backup-and-recovery.md|Backup and Recovery]]
+- [[./README.md|systemd README]]
