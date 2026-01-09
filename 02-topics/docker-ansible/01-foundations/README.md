@@ -48,7 +48,7 @@
 
 **Контент:**
 - [[02-topics/docker-ansible/03-docker-basics/README|README]] — основы Docker
-- [[02-topics/docker-ansible/04-docker-images/README|README]] — создание образов
+- [[02-topics/docker-ansible/04-docker-images-dockerfile/README|README]] — создание образов
 %% - [[09-ansible-fundamentals]] — основы Ansible %%
 
 ---
