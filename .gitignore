@@ -32,3 +32,5 @@ build/
 *.log
 logs/
 
+# Cache
+quartz/.quartz-cache
