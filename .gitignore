@@ -1,4 +1,4 @@
-# Obsidian workspace settings
+# Obsidian workspace setting
 .obsidian/
 
 # Trash
@@ -7,4 +7,28 @@
 # System files
 .DS_Store
 Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+.npm
+
+# Build output
+public/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
 
