@@ -1,10 +1,12 @@
-### Docker Compose: Advanced Patterns
+---
+title: 02 Docker Compose - Advanced Patterns
+---
 
 Advanced техники и best practices для Docker Compose.
 
 ---
 
-#### Build Configuration
+## Build Configuration
 
 **Build from Dockerfile:**
 
@@ -51,7 +53,7 @@ services:
 
 ---
 
-#### Зависимости между сервисами
+## Зависимости между сервисами
 
 **depends_on (базовая зависимость):**
 
@@ -100,7 +102,7 @@ services:
 
 ---
 
-#### Restart Policies
+## Restart Policies
 
 **Политики перезапуска:**
 
@@ -133,7 +135,7 @@ services:
 
 ---
 
-#### Environment Variables
+## Environment Variables
 
 **.env файл:**
 
@@ -184,7 +186,7 @@ cat .env | grep DATABASE                # проверить .env
 
 ---
 
-#### Profiles (Selective Startup)
+## Profiles (Selective Startup)
 
 **Разделение сервисов по профилям:**
 
@@ -260,7 +262,7 @@ docker compose run --rm adminer         # запустить даже если �
 
 ---
 
-#### Volume Management в Compose
+## Volume Management в Compose
 
 **Named volumes:**
 
@@ -317,7 +319,7 @@ volumes:
 
 ---
 
-#### Override Files
+## Override Files
 
 **Automatic override (docker-compose.override.yml):**
 
@@ -394,7 +396,7 @@ services:
 
 ---
 
-#### Shared Configurations (DRY)
+## Shared Configurations (DRY)
 
 **YAML якоря и ссылки:**
 
@@ -434,7 +436,7 @@ services:
 
 ---
 
-#### Health Checks
+## Health Checks
 
 **Базовый healthcheck:**
 
@@ -490,7 +492,7 @@ healthcheck:
 
 ---
 
-#### Scaling Services
+## Scaling Services
 
 **Запуск нескольких экземпляров:**
 
@@ -525,9 +527,9 @@ services:
 
 ---
 
-#### Практические примеры
+## Практические примеры
 
-##### Пример 1: Development Setup (код синхронизируется)
+### Пример 1: Development Setup (код синхронизируется)
 
 ```yaml
 version: '3.9'
@@ -572,7 +574,7 @@ volumes:
   db_dev:
 ```
 
-##### Пример 2: Full Stack Production
+### Пример 2: Full Stack Production
 
 ```yaml
 version: '3.9'
@@ -637,7 +639,7 @@ volumes:
   db_data:
 ```
 
-##### Пример 3: Микросервисная архитектура
+### Пример 3: Микросервисная архитектура
 
 ```yaml
 version: '3.9'
@@ -756,7 +758,7 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 ---
 
-#### Best Practices
+## Best Practices
 
 ✅ **Версионирование:** используй специфичные версии образов (не latest)  
 ✅ **Healthchecks:** добавляй для всех критичных сервисов  

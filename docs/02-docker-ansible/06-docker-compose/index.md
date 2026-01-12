@@ -1,14 +1,14 @@
 ---
-title: 06 Docker compose
+title: 06 Docker Compose
 ---
 
 Управление multi-container приложениями с Docker Compose.
 
 ---
 
-#### 📚 Содержание
+## 📚 Содержание
 
-##### **[[01-compose-intro]]**
+#### **[[01-compose-intro|01 Docker Compose - Введение и основы]]**
 
 **Введение в Docker Compose:**
 - Что такое Docker Compose
@@ -43,7 +43,7 @@ title: 06 Docker compose
 
 ---
 
-##### **[[02-compose-advanced]]**
+#### **[[02-compose-advanced|02 Docker Compose - Advanced Patterns]]**
 
 **Advanced Docker Compose:**
 - Build configuration (build context, dockerfile path, args)
@@ -94,18 +94,17 @@ title: 06 Docker compose
 
 ---
 
-#### 🔗 Структура раздела
+## 🔗 Структура раздела
 
 ```
-06-docker-compose/
-├── README.md (этот файл)
-├── 01-compose-intro.md (основы, YAML, simple конфиги)
-└── 02-compose-advanced.md (advanced patterns, profiles, overrides)
+06-Docker Compose (этот файл)
+├── 01 Docker Compose - Введение и основы (основы, YAML, simple конфиги)
+└── 02 Docker Compose - Advanced Patterns (advanced patterns, profiles, overrides)
 ```
 
 ---
 
-#### ✅ Checklist
+## ✅ Checklist
 
 **После изучения 01-compose-intro:**
 - ✅ Понимаешь что такое Docker Compose и когда использовать

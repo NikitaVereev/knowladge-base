@@ -6,9 +6,9 @@ title: 02 Подготовка окружения
 
 ---
 
-#### 📚 Содержание
+## 📚 Содержание
 
-##### 1. **[[01-setup-vm]]**
+#### 1. **[[01-setup-vm|Устаноква виртуальной машины]]**
 Установка VirtualBox и Ubuntu 24.04 LTS.
 
 - VirtualBox 7.0+ на Arch Linux
@@ -20,7 +20,7 @@ title: 02 Подготовка окружения
 
 ---
 
-##### 2. **[[02-ssh-keygen]]**
+#### 2. **[[02-ssh-keygen|Linux Essentials - SSH]]**
 SSH ключи.
 
 - Генерирование Ed25519 SSH ключей
@@ -28,13 +28,13 @@ SSH ключи.
 - Безпарольный SSH доступ
 - SSH agent
 
-**Требования:** VM из [[01-setup-vm]]
+**Требования:** VM из [[01-setup-vm|Устаноква виртуальной машины]]
 
 **Результат:** SSH ключи.
 
 ---
 
-##### 3. **[[03-docker-ansible-setup]]**
+##### 3. **[[03-docker-ansible-setup|Docker и Ansible - установка и базовая настройка]]**
 Docker Engine, Docker Compose, Ansible и Vagrant.
 
 - Docker Engine установка (официальная документация)
@@ -50,20 +50,20 @@ Docker Engine, Docker Compose, Ansible и Vagrant.
 
 ---
 
-## ✅ Проверочный лист
+## ✅ Checklist
 
-**После [[01-setup-vm]]:**
+**После [[01-setup-vm|Устаноква виртуальной машины]]:**
 - ✅ VirtualBox работает
 - ✅ VM создана с параметрами
 - ✅ Ubuntu 24.04 LTS установлена
 - ✅ SSH: `ssh username@127.0.0.1 -p 2222`
 
-**После [[02-ssh-keygen]]:**
+**После [[02-ssh-keygen|Linux Essentials - SSH]]:**
 - ✅ SSH ключи (Ed25519) созданы
 - ✅ Публичный ключ на VM
 - ✅ Безпарольный SSH работает
 
-**После [[03-docker-ansible-setup]]:**
+**После [[03-docker-ansible-setup|Docker и Ansible - установка и базовая настройка]]:**
 - ✅ Docker: `docker --version`
 - ✅ Docker работает без sudo: `docker ps`
 - ✅ Ansible: `ansible --version`
@@ -80,19 +80,25 @@ Docker Engine, Docker Compose, Ansible и Vagrant.
 - [Ansible Docs](https://docs.ansible.com/)
 - [VirtualBox Manual](https://www.virtualbox.org/manual/)
 
-**Related sections:**
-- [[03-docker-fundamentals]] — следующий раздел
+---
+
+## 🔗 Связи
+
+**Предыдущий раздел:**
+- [[02-docker-ansible/01-foundations/index|01 Введение в Docker и Ansible]]
+
+**Следующий раздел:**
+- [[02-docker-ansible/03-docker-basics/index|03 Основы Docker]]
 
 ---
 
 ## 📂 Структура
 
 ```
-02-environment/
-├── README.md                      # этот файл
-├── 01-setup-vm.md                 # VirtualBox + Ubuntu
-├── 02-ssh-keygen.md               # SSH
-└── 03-docker-ansible-setup.md     # Docker + Ansible + Vagrant
+02 Подготовка окружения                                     # этот файл
+├── 01 Установка виртуальной машины                         # VirtualBox + Ubuntu
+├── 02 LinuxEssentials - SSH                                # SSH
+└── 03 Docker и Ansible - установка и базовая настройка     # Docker + Ansible + Vagrant
 ```
 
 ---

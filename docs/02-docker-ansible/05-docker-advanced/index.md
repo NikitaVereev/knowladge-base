@@ -6,11 +6,11 @@ title: 05 Продвинутые возможности
 
 ---
 
-#### 📚 Содержание
+## 📚 Содержание
 
-##### **Подраздел: Networking**
+### **Подраздел: Networking**
 
-###### **[[docs/02-docker-ansible/05-docker-advanced/networking/index]]**
+#### **[[02-docker-ansible/05-docker-advanced/networking/index|01 Docker Networking]]**
 
 **Docker Networking:**
 - Основы Docker сетей (LibNetwork)
@@ -37,9 +37,9 @@ title: 05 Продвинутые возможности
 
 ---
 
-##### **Подраздел: Storage**
+### **Подраздел: Storage**
 
-###### **[[docs/02-docker-ansible/05-docker-advanced/storage/index]]**
+#### **[[02-docker-ansible/05-docker-advanced/storage/index|02 Docker Storage and Volumes]]**
 
 **Docker Volumes:**
 - Типы хранилища (bind mounts, volumes, tmpfs)
@@ -63,9 +63,9 @@ title: 05 Продвинутые возможности
 
 ---
 
-##### **Подраздел: Registry**
+### **Подраздел: Registry**
 
-###### **[[docs/02-docker-ansible/05-docker-advanced/registry/index]]**
+#### **[[02-docker-ansible/05-docker-advanced/registry/index|03 Docker Registry]]**
 
 **Docker Registry:**
 - Docker Hub (официальный реестр)
@@ -80,30 +80,26 @@ title: 05 Продвинутые возможности
 
 ---
 
-#### 🔗 Структура раздела
+## 🔗 Структура раздела
 
 ```
-05-docker-advanced/
-├── README.md (этот файл)
-├── networking/
-│   ├── README.md
-│   └── 01-docker-networks.md
-├── storage/
-│   ├── README.md
-│   └── 01-volumes-mounts.md
-└── registry/
-    ├── README.md
-    └── 01-docker-registry.md
+05-Продвинутые возможности   (этот файл)
+├── 01 Docker Networking
+│   └── 01 Docker Network - Основы и режимы
+├── 02 Docker Storage and Volumes
+│   └── 01 Docker Storage - Volumes и Bind Mounts
+└── 03 Docker Registry
+    └── 01 Docker Registry - Публикация и распространение образов
 ```
 
 ---
 
-#### 🔗 Связи
+## 🔗 Связи
 
 **Предыдущие разделы:**
-- [[docs/02-docker-ansible/04-docker-images-dockerfile/index]] — создание образов
+- [[02-docker-ansible/04-docker-images-dockerfile/index|04 Образы и Dockerfile]]
 
-%% **Следующие разделы:**
-- [[06-docker-orchestration]] — Docker Compose, Swarm, Kubernetes %%
+**Следующие разделы:**
+- [[02-docker-ansible/06-docker-compose/index|06 Docker compose]] 
 
 ---

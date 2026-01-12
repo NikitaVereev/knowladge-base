@@ -6,9 +6,9 @@ title: 02 Docker Storage and Volumes
 
 ---
 
-#### 📚 Содержание
+## 📚 Содержание
 
-##### **[[01-volumes-mounts]]**
+#### **[[01-volumes-mounts|01 Docker Storage - Volumes и Bind Mounts]]**
 
 **Docker Volumes:**
 - Типы хранилища (named volumes, bind mounts, tmpfs)
@@ -53,7 +53,7 @@ title: 02 Docker Storage and Volumes
 
 ---
 
-#### ✅ Checklist
+## ✅ Checklist
 
 **После изучения этого раздела:**
 - ✅ Понимаешь типы хранилища в Docker

@@ -1,10 +1,10 @@
 ---
-title: Docker +_Ansible
+title: Docker + Ansible
 ---
 
 Компактный справочник по Docker, Ansible и оркестрации. Файлы организованы как набор самостоятельных тем и мини-шпаргалок.
 
-#### Структура
+## Структура
 
 - [[01-foundations]] — мотивация, сценарии использования, общая архитектура Docker + Ansible.
 - [02-environment/](docs/02-docker-ansible/02-environment/index.md) — виртуальные машины, базовый Linux, SSH, установка Docker, Ansible и Vagrant.
