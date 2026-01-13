@@ -29,7 +29,7 @@ title: 07 Ansible Fundamentals
 
 ---
 
-#### **[[02-installation|02 Установка и Конфигурация]]**
+#### **[[docs/02-docker-ansible/07-ansible-foundamentals/02-installation|02 Установка и Конфигурация]]**
 
 **Установка на разные ОС:**
 - Arch Linux (pacman, pip, AUR)

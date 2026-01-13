@@ -201,4 +201,4 @@ $ ssh ubuntu@server "python3 -m ansible.modules.apt \
 
 ---
 
-**Следующее:** [[02-installation|Установка и Конфигурация]]
+**Следующее:** [[docs/02-docker-ansible/07-ansible-foundamentals/02-installation|Установка и Конфигурация]]
