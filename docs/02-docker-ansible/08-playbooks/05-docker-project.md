@@ -11,54 +11,80 @@ title: 05 Практический Проект - Docker Setup
 - name: Setup Docker on Ubuntu
   hosts: all
   become: yes
+  gather_facts: yes
   
   vars:
-    docker_compose_version: "2.24.0"
+    docker_users: ["{{ ansible_user }}"]
+    docker_log_max_size: "100m"
+    docker_log_max_file: "10"
+  
+  pre_tasks:
+    - name: Проверка совместимости ОС
+      assert:
+        that:
+          - ansible_facts['distribution'] in ['Ubuntu', 'Debian']
+          - ansible_facts['distribution_version'] is version('20.04', '>=')
+        fail_msg: "Поддерживается только Ubuntu 20.04+ или Debian 11+"
+    
+    - name: Определение архитектуры
+      set_fact:
+        docker_arch: "{{ 'amd64' if ansible_facts['machine'] == 'x86_64' else 'arm64' if ansible_facts['machine'] == 'aarch64' else 'armhf' }}"
   
   tasks:
-    # Подготовка
-    - name: Update package cache
+    # Очистка старых конфигураций (если есть)
+    - name: Удаление старых Docker репозиториев
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/apt/sources.list.d/docker.list
+        - /usr/share/keyrings/docker-archive-keyring.gpg
+        - /etc/apt/keyrings/docker.gpg
+    
+    - name: Обновление кэша пакетов
       apt:
         update_cache: yes
         cache_valid_time: 3600
     
-    - name: Install required packages
+    - name: Установка необходимых пакетов
       apt:
         name:
+          - apt-transport-https
           - ca-certificates
           - curl
           - gnupg
           - lsb-release
+          - python3-pip
         state: present
     
-    # Добавить Docker репозиторий
-    - name: Create keyrings directory
+    # Настройка репозитория Docker
+    - name: Создание директории для ключей
       file:
         path: /etc/apt/keyrings
         state: directory
         mode: '0755'
     
-    - name: Add Docker GPG key
-      shell: |
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-        gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-      args:
-        creates: /etc/apt/keyrings/docker.gpg
+    - name: Загрузка GPG-ключа Docker
+      get_url:
+        url: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+      register: gpg_key
+      retries: 3
+      delay: 5
     
-    - name: Add Docker repository
-      shell: |
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-        https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
-        tee /etc/apt/sources.list.d/docker.list > /dev/null
-      args:
-        creates: /etc/apt/sources.list.d/docker.list
+    - name: Добавление репозитория Docker
+      apt_repository:
+        repo: "deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable"
+        state: present
+        filename: docker
     
-    - name: Update cache after adding Docker repo
+    - name: Обновление кэша после добавления репо
       apt:
         update_cache: yes
     
     # Установка Docker
-    - name: Install Docker Engine
+    - name: Установка Docker Engine
       apt:
         name:
           - docker-ce
@@ -67,46 +93,101 @@ title: 05 Практический Проект - Docker Setup
           - docker-buildx-plugin
           - docker-compose-plugin
         state: present
+        update_cache: yes
+      register: docker_install
     
-    # Запуск сервисов
-    - name: Start Docker service
+    # Настройка безопасности (без ulimits в daemon.json)
+    - name: Создание daemon.json с security hardening
+      copy:
+        content: |
+          {
+            "log-driver": "json-file",
+            "log-opts": {
+              "max-size": "{{ docker_log_max_size }}",
+              "max-file": "{{ docker_log_max_file }}",
+              "compress": "true"
+            },
+            "storage-driver": "overlay2",
+            "icc": false,
+            "userland-proxy": false,
+            "no-new-privileges": true,
+            "live-restore": true
+          }
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: '0600'
+        backup: yes
+      notify: restart docker
+    
+    # Управление сервисами
+    - name: Перезагрузка systemd демона
+      systemd:
+        daemon_reload: yes
+    
+    - name: Запуск и активация Docker
       systemd:
         name: docker
         state: started
         enabled: yes
-        daemon_reload: yes
     
-    - name: Start containerd service
+    - name: Запуск containerd
       systemd:
         name: containerd
         state: started
         enabled: yes
     
-    # Настройка пользователя
-    - name: Add current user to docker group
+    # Настройка пользователей
+    - name: Добавление пользователей в группу docker
       user:
-        name: "{{ ansible_user }}"
+        name: "{{ item }}"
         groups: docker
         append: yes
+      loop: "{{ docker_users }}"
+      register: user_added
+    
+    - name: Перезагрузка SSH соединения
+      meta: reset_connection
     
     # Проверка установки
-    - name: Check Docker version
-      shell: "docker --version"
+    - name: Проверка версии Docker
+      command: docker --version
       register: docker_version
-      changed_when: False
+      changed_when: false
     
-    - name: Display Docker version
+    - name: Проверка Docker Compose
+      command: docker compose version
+      register: compose_version
+      changed_when: false
+    
+    - name: Получение информации о Docker
+      shell: docker info --format json
+      register: docker_info_raw
+      changed_when: false
+    
+    - name: Проверка конфигурации daemon.json
+      shell: cat /etc/docker/daemon.json | python3 -m json.tool
+      register: daemon_json_check
+      changed_when: false
+    
+    - name: Вывод результатов установки
       debug:
-        msg: "{{ docker_version.stdout }}"
-    
-    - name: Test Docker installation
-      shell: "docker run --rm hello-world"
-      register: docker_test
-      changed_when: False
-    
-    - name: Display test result
-      debug:
-        msg: "{{ docker_test.stdout_lines[-1] }}"
+        msg:
+          - "✅ Docker установлен: {{ docker_version.stdout }}"
+          - "✅ Compose установлен: {{ compose_version.stdout }}"
+          - "✅ Пользователь добавлен в группу docker"
+          - "✅ Конфигурация применена успешно"
+          - ""
+          - "Проверь установку командой:"
+          - "  docker run --rm hello-world"
+  
+  handlers:
+    - name: restart docker
+      systemd:
+        name: docker
+        state: restarted
+        daemon_reload: yes
+
 ```
 
 ---
