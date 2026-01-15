@@ -72,9 +72,6 @@ vagrant version
 
 **Arch Linux:**
 ```bash
-# Из официального репозитория
-sudo pacman -S vagrant
-
 # Или из AUR (свежая версия)
 yay -S vagrant
 
@@ -143,39 +140,28 @@ $ exit  # Выйти из SSH
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  # Образ виртуальной машины
-  config.vm.box = "ubuntu/jammy64"
-  
-  # Имя машины (видно в VirtualBox)
-  config.vm.hostname = "dev-server"
-  
-  # Сетевые настройки
-  config.vm.network "private_network", ip: "192.168.56.10"
-  
-  # Port forwarding
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
-  config.vm.network "forwarded_port", guest: 3000, host: 3000
-  
-  # Параметры VirtualBox
-  config.vm.provider "virtualbox" do |vb|
-    # Имя в VirtualBox
-    vb.name = "dev-server"
-    
-    # Оперативная память (MB)
-    vb.memory = 2048
-    
-    # Количество CPU
-    vb.cpus = 2
-    
-    # GUI (false = без окна)
-    vb.gui = false
+  (1..2).each do |i|
+    config.vm.define "server#{i}" do |web|
+      web.vm.box = "ubuntu/jammy64"
+      web.vm.network "forwarded_port", id: "ssh", host: 2222 + i, guest: 22
+      web.vm.network "private_network", ip: "10.11.10.#{i}", virtualbox__intnet: true
+      web.vm.hostname = "server#{i}"
+
+      web.vm.provision "shell" do |s|
+        ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_ed25519.pub").first.strip
+        s.inline = <<-SHELL
+        echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+        echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+        SHELL
+      end
+
+      web.vm.provider "virtualbox" do |v|
+        v.name = "server#{i}"
+        v.memory = 2048
+        v.cpus = 1
+      end
+    end
   end
-  
-  # Provisioning (выполнить после создания)
-  config.vm.provision "shell", inline: <<-SHELL
-    apt-get update
-    apt-get install -y curl wget git
-  SHELL
 end
 ```
 
@@ -187,8 +173,10 @@ end
 |---------|---------|
 | `vagrant init <box>` | Инициализировать новый проект |
 | `vagrant up` | Создать и запустить машины |
+| `vagrant up server1` | Запустить конкретную машину |
 | `vagrant status` | Статус машин |
 | `vagrant ssh` | Подключиться по SSH |
+| `vagrant ssh server1` | SSH в конкретную машину
 | `vagrant halt` | Остановить машины |
 | `vagrant destroy` | Удалить машины |
 | `vagrant reload` | Перезагрузить машины |
