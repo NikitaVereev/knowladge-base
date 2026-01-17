@@ -195,6 +195,3 @@ Monitoring & Alerting
 ```
 
 ---
-
-**Версия:** Ansible 2.15+, Python 3.8+  
-**Язык:** Русский

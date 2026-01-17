@@ -17,4 +17,5 @@ title: Docker + Ansible
 - [[02-docker-ansible/09-vagrant|09 Vagrant - Infrastructure as Code]] — 09 Vagrant - Infrastructure as Code
 - [[02-docker-ansible/10-docker-swarm-advanced|10 Docker Swarm Advanced]] — Продвинутые возможности Docker Swarm: networking, secrets, stateful сервисы, healthchecks и отказоустойчивость
 - [[02-docker-ansible/11-ansible-advanced|11 Ansible Advanced & Productioni]] — Продвинутые паттерны Ansible для production: roles, automation, security и deployment pipelines
+- [[02-docker-ansible/12-depoly-to-cluster|12 Deploy to Cluster]] — Практическое развёртывание приложений на Docker Swarm кластеры с использованием Ansible
 
