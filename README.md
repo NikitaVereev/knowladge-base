@@ -1,186 +1,69 @@
----  
-title: Knowledge Base  
-description: Личная база знаний (Quartz/Obsidian) со структурой Diátaxis по доменам.  
-tags: [index, quartz, diataxis, knowledge-base, structure, navigation]  
-aliases: [Home, Главная]  
----  
-# Knowledge Base  
-  
-## Как устроено  
-- Все заметки лежат в `content/` и используют YAML frontmatter.​  
-- Каждая заметка относится ровно к одному типу Diátaxis: tutorial | howto | reference | explanation. ​  
-- Внутренние ссылки — в формате wikilinks: `[[path/to/note]]` (без `.md`).​  
-  
-## Домены  
-- [[devops/index]]  
-- [[docs/_inbox/01-linux/index]]  
-- [[backend/index]] (planned)  
-- [[frontend/index]] (planned)  
-- [[git/index]] (planned)  
-- [[mobile/index]] (planned)  
-- [[other/index]] (planned)  
-  
-## Как добавлять заметки  
-1. Выбери домен: devops | linux | backend | frontend | git | mobile | other. ​  
-2. Выбери один тип Diátaxis и не смешивай форматы в одном файле.​  
-3. Создай файл по шаблону: `content/<domain>/<type>/<name>.md` (kebab-case).​  
-4. Если тема “смешанная”, оставь один тип, а остальное вынеси в `See also` ссылками на будущие заметки (planned).​  
-  
-## Быстрый вход  
-- Linux: [[docs/_inbox/01-linux/index]]  
-- Docker/Ansible: [[devops/index]]
+---
+title: "Knowledge Base"
+description: "Практическая база знаний по IT: Linux, DevOps, Backend, Frontend, Mobile и так далее"
+---
 
-Path: content/linux/index.md  
----  
-title: Linux  
-description: Навигация по заметкам Linux (tutorial/howto/reference/explanation).  
-tags: [linux, index, navigation, diataxis]  
-aliases: [GNU/Linux]  
----  
-# Linux  
-  
-## Разделы  
-- [[linux/tutorial/index]]  
-- [[linux/howto/index]]  
-- [[linux/reference/index]]  
-- [[linux/explanation/index]]  
-  
-## С чего начать (planned)  
-- [[linux/tutorial/linux-installation-basics]] (planned)  
-- [[linux/reference/users-groups-permissions]] (planned)  
-- [[linux/reference/systemd-units-services]] (planned)
+Эта база знаний построена по методологии **Diátaxis** — каждый материал решает конкретную задачу: обучение с нуля (tutorials), быстрое решение проблемы (how-to), точный справочник (reference) или глубокое понимание (explanation).
 
-Path: content/linux/tutorial/index.md  
----  
-title: Linux Tutorials  
-description: Обучающие маршруты по Linux “с нуля”.  
-tags: [linux, tutorial, index, learning]  
-aliases: [Linux Learning Paths]  
----  
-# Linux Tutorials  
-  
-## Здесь будут  
-- Пошаговые маршруты с контрольными точками и проверкой результата.​  
-  
-## Planned  
-- [[linux/tutorial/linux-installation-basics]] (planned)
+Используется **Quartz 4** — статический генератор, который автоматически создаёт навигацию по папкам и поддерживает вики-ссылки между страницами.
 
-Path: content/linux/howto/index.md  
----  
-title: Linux How-to  
-description: Практические инструкции “как сделать X” в Linux.  
-tags: [linux, howto, index, troubleshooting]  
-aliases: [Linux Tasks]  
----  
-# Linux How-to  
-  
-## Здесь будут  
-- Короткие решения конкретных задач с разделами “Проверка” и “Если не работает”.​  
-  
-## Planned  
-- [[linux/howto/ssh-keygen-ed25519]] (planned)
+## Как устроена база
 
-Path: content/linux/reference/index.md  
----  
-title: Linux Reference  
-description: Справочные заметки по Linux (команды, форматы, таблицы).  
-tags: [linux, reference, index, commands]  
-aliases: [Linux Cheatsheets]  
----  
-# Linux Reference  
-  
-## Здесь будут  
-- Справочники без “почему” и без обучающих маршрутов, только факты/команды/таблицы.​  
-  
-## Planned  
-- [[linux/reference/users-groups-permissions]] (planned)  
-- [[linux/reference/systemd-units-services]] (planned)
+Материалы разложены по **предметным областям** и **типам документации** внутри каждого домена.
 
-Path: content/linux/explanation/index.md  
----  
-title: Linux Explanations  
-description: Объяснения концепций Linux (модели, компромиссы, устройство).  
-tags: [linux, explanation, index, concepts]  
-aliases: [Linux Concepts]  
----  
-# Linux Explanations  
-  
-## Здесь будут  
-- Объяснения “как устроено/почему так”, без процедур “сделай раз-два-три”.​
+### Четыре типа материалов (Diátaxis)
 
-Path: content/devops/index.md  
----  
-title: DevOps  
-description: Навигация по заметкам DevOps (Docker, Ansible и др.) в формате Diátaxis.  
-tags: [devops, index, navigation, docker, ansible]  
-aliases: [SRE]  
----  
-# DevOps  
-  
-## Разделы  
-- [[devops/tutorial/index]]  
-- [[devops/howto/index]]  
-- [[devops/reference/index]]  
-- [[devops/explanation/index]]  
-  
-## Популярные темы (planned)  
-- [[devops/tutorial/docker-compose-basics]] (planned)  
-- [[devops/reference/dockerfile-basics]] (planned)  
-- [[devops/reference/ansible-inventory]] (planned)
+| Тип | Когда использовать | Что внутри |
+|---|---|---|
+| **Tutorials** | Нужно пройти путь от нуля до результата | Пошаговые сценарии с контрольными точками |
+| **How-to** | Нужно быстро решить конкретную задачу | Короткие рецепты "как сделать X" |
+| **Reference** | Нужна точная команда/опция/синтаксис | Справочники, таблицы, команды |
+| **Explanation** | Нужно понять "почему так" и "как устроено" | Концепции, архитектура, контекст |
 
-Path: content/devops/tutorial/index.md  
----  
-title: DevOps Tutorials  
-description: Обучающие маршруты по Docker/Ansible/инфраструктуре.  
-tags: [devops, tutorial, index, learning]  
-aliases: []  
----  
-# DevOps Tutorials  
-  
-## Здесь будут  
-- Пошаговые сценарии “с нуля” с проверкой результата.​  
-  
-## Planned  
-- [[devops/tutorial/docker-compose-basics]] (planned)  
-- [[devops/tutorial/docker-ansible-setup-ubuntu]] (planned)
+Подробнее о методологии: [Diátaxis](https://diataxis.fr) 
 
-Path: content/devops/howto/index.md  
----  
-title: DevOps How-to  
-description: Практические инструкции по DevOps задачам.  
-tags: [devops, howto, index, operations]  
-aliases: []  
----  
-# DevOps How-to  
-  
-## Здесь будут  
-- Короткие инструкции “сделай X” + проверка + диагностика.​
+## Предметные области
 
-Path: content/devops/reference/index.md  
----  
-title: DevOps Reference  
-description: Справочник по командам и конфигам (Docker/Ansible и др.).  
-tags: [devops, reference, index, docker, ansible]  
-aliases: []  
----  
-# DevOps Reference  
-  
-## Здесь будут  
-- Команды, опции, шаблоны конфигов, таблицы — без обучения и без объяснений причин.​  
-  
-## Planned  
-- [[devops/reference/docker-compose-commands]] (planned)  
-- [[devops/reference/dockerfile-instructions]] (planned)  
-- [[devops/reference/ansible-playbook-structure]] (planned)
+### [[foundations/]](в планах)
+Базовые основы, общие для всех направлений: операционные системы, сети, терминал, файловые системы.
 
-Path: content/devops/explanation/index.md  
----  
-title: DevOps Explanations  
-description: Объяснения концепций DevOps (модели, компромиссы, устройство).  
-tags: [devops, explanation, index, concepts]  
-aliases: []  
----  
-# DevOps Explanations  
-  
-## Здесь будут  
-- Объяснения концепций (например: “почему так устроено”), без пошаговых процедур.
+### [[tools/]](в процессе)
+Кроссплатформенные инструменты, которые используются везде:
+- [[tools/git/]] — система контроля версий
+- [[tools/ssh/]] — безопасное подключение и удалённый доступ
+- [[tools/environments/]] — виртуализация и окружения разработки (VirtualBox, Vagrant)
+
+### [[linux/]](в процессе)
+Установка, администрирование и повседневная работа с Linux:
+- Установка и выбор дистрибутива
+- Пользователи, права, systemd
+- Пакетные менеджеры (apt, pacman, AUR)
+
+### [[devops/]](в процессе)
+Контейнеризация, оркестрация и автоматизация инфраструктуры:
+- Docker (контейнеры, образы, сети, Compose, Swarm)
+- Ansible (playbooks, inventory, roles, debugging)
+- Практики деплоя и мониторинга
+
+### [[backend/]](в планах)
+Серверная разработка: API, базы данных, архитектура бэкенда.  
+*(в развитии)*
+
+### [[frontend/]](в планах)
+Клиентская разработка: HTML/CSS/JS, фреймворки, сборка.  
+*(в развитии)*
+
+### [[mobile/]](в планах)
+Мобильная разработка: Android, iOS, кроссплатформенные решения.  
+*(в развитии)*
+
+## Принципы базы
+
+- **Один файл — одна цель.** Tutorials, how-to, reference и explanation не смешиваются в одной странице.
+- **Переиспользование через ссылки.** Общие темы (SSH, Git, VirtualBox, Vagrant) живут в `tools/` и используются из всех областей.
+- **Масштабируемость.** Предметные области добавляются без перестройки структуры.
+
+---
+
+**Временная папка:** [[_inbox/]] — сырые заметки до их классификации.  
+**Методология:** [[_meta/]] — как устроена база, правила написания, шаблоны страниц.
