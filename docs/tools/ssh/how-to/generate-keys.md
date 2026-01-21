@@ -86,5 +86,5 @@ chmod 600 ~/.ssh/authorized_keys
 
 ## Связанные материалы
 
-- [[tools/environments/virtualbox/how-to/create-ubuntu-vm-manually|Ручное создание VM с SSH]]
+- [[create-vm-manually|Ручное создание VM с SSH]]
 - [[devops/ansible/tutorials/setup-environment|Подготовка окружения для Ansible]]

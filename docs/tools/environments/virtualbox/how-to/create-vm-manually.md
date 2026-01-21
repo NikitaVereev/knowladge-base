@@ -1,6 +1,6 @@
 ---
-title: "Ручное создание Ubuntu VM в VirtualBox"
-description: "Пошаговая инструкция по установке VirtualBox на Arch Linux и созданию виртуальной машины с Ubuntu 24.04 Server вручную."
+title: "Установка VirtualBox"
+description: "Пошаговая инструкция по установке VirtualBox и созданию виртуальной машины с Ubuntu 24.04 Server вручную."
 ---
 
 
@@ -12,7 +12,7 @@ description: "Пошаговая инструкция по установке Vi
 - **Ресурсы:** Минимум 2 ГБ RAM и 20 ГБ свободного места на диске.
 - **Хост-система:** В примере используется Arch Linux, но шаги 5-9 универсальны.
 
-## Установка VirtualBox (на примере Arch Linux)
+## Arch linux
 
 Если у вас Ubuntu/Debian/macOS/Windows, пропустите этот шаг и установите VirtualBox через официальный инсталлятор или пакетный менеджер.
 
@@ -46,6 +46,48 @@ description: "Пошаговая инструкция по установке Vi
    # Требуется перелогиниться, чтобы группа применилась
    newgrp vboxusers
    ```
+
+## Ubuntu / Debian
+
+```bash
+sudo apt update
+sudo apt install virtualbox virtualbox-ext-pack
+```
+
+Проверка:
+```bash
+VBoxManage --version
+```
+
+## macOS
+
+Рекомендуемый способ через Homebrew:
+
+```bash
+brew install --cask virtualbox
+```
+
+Если установка не удалась из-за разрешений безопасности, перейдите в **System Settings → Privacy & Security** и разрешите запуск ПО от Oracle.
+
+Проверка установки:
+```bash
+VBoxManage --version
+```
+
+Проверка:
+```bash
+VBoxManage --version
+```
+
+## Windows
+
+Рекомендуемый способ через Chocolatey:
+
+```powershell
+choco install virtualbox
+```
+
+Альтернативно скачайте инсталлятор с [официального сайта](https://www.virtualbox.org/wiki/Downloads).
 
 ## Создание виртуальной машины
 
