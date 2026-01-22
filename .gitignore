@@ -35,4 +35,3 @@ logs/
 # Cache
 quartz/.quartz-cache
 # Hidden
-docs/02-devops
