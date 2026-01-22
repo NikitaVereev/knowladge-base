@@ -1,10 +1,7 @@
 ---
-title: "Настройка файла инвентаря"
+title: "2 Настройка файла инвентаря"
 description: "Примеры конфигурации hosts.yaml, параметры подключения и отладка."
 ---
-
-
-Пример настройки статического инвентаря в формате YAML с различными параметрами подключения.
 
 ## Пример структуры (`hosts.yaml`)
 
@@ -20,7 +17,7 @@ all:
     # Группа веб-серверов
     webservers:
       hosts:
-        # Хост с явным указанием IP (если DNS не настроен)
+        # Хост с явным указанием IP
         web-01:
           ansible_host: 192.168.1.10
         
@@ -42,15 +39,15 @@ all:
           ansible_connection: local
 ```
 
-## Параметры подключения
+## Параметры подключения (Magic Variables)
 
 | Переменная | Описание |
 |------------|----------|
-| `ansible_host` | Реальный IP или домен сервера. Если не указан, используется имя хоста из инвентаря. |
+| `ansible_host` | Реальный IP или домен сервера. |
 | `ansible_port` | Порт SSH (по умолчанию 22). |
-| `ansible_user` | Пользователь, под которым Ansible будет заходить на сервер. |
-| `ansible_ssh_private_key_file` | Путь к приватному ключу SSH. |
-| `ansible_connection` | Тип соединения (`ssh`, `local`, `docker`). |
+| `ansible_user` | Пользователь SSH. |
+| `ansible_ssh_private_key_file` | Путь к ключу. |
+| `ansible_connection` | Тип соединения: `ssh` (default), `local`, `docker` (для управления контейнерами), `winrm` (для Windows). |
 | `ansible_become` | `true`/`yes` — выполнять команды через sudo. |
 
 ## Проверка инвентаря
@@ -64,12 +61,3 @@ all:
    ```bash
    ansible -i hosts.yaml all -m ping
    ```
-
-3. **Посмотреть переменные конкретного хоста:**
-   ```bash
-   ansible-inventory -i hosts.yaml --host web-01
-   ```
-
-## Связанные материалы
-- [[devops/ansible/explanation/inventory-basics|Основы инвентаря]]
-- [[devops/ansible/how-to/install-and-setup|Установка Ansible]]
