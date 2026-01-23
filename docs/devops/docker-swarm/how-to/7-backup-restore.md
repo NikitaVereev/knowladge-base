@@ -35,4 +35,4 @@ description: "Как сохранить состояние Swarm и восста
     ```
 
 ## Связанные материалы
-- [[1-architecture|Архитектура Swarm]]
+- [[docs/devops/docker-swarm/explanation/1-architecture|Архитектура Swarm]]

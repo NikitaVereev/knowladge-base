@@ -31,5 +31,5 @@ description: "Глубокое погружение в Service Discovery, Virtua
 *   Это обеспечивает отказоустойчивость: вы можете направить балансировщик нагрузки на любые ноды кластера.
 
 ## Связанные материалы
-- [[1-architecture|Архитектура Swarm]]
+- [[docs/devops/docker-swarm/explanation/1-architecture|Архитектура Swarm]]
 - [[devops/docker/explanation/docker-networks|Основы сетей Docker]]

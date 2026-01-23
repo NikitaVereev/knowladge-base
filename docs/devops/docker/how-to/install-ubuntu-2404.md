@@ -74,5 +74,5 @@ description: "Пошаговая инструкция по установке Do
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/architecture|Архитектура Docker]]
+- [[docs/devops/docker/explanation/1-architecture|Архитектура Docker]]
 - [[devops/ansible/tutorials/install-docker-playbook|Установка Docker через Ansible]]

@@ -33,4 +33,4 @@ description: "Шпаргалка по основным командам упра
 | `docker stack rm <name>` | Удалить стек. |
 
 ## Связанные материалы
-- [[1-architecture|Архитектура Swarm]]
+- [[docs/devops/docker-swarm/explanation/1-architecture|Архитектура Swarm]]

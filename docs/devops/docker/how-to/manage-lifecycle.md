@@ -127,5 +127,5 @@ docker rm mongo-db
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/architecture|Архитектура и состояния контейнеров]]
+- [[docs/devops/docker/explanation/1-architecture|Архитектура и состояния контейнеров]]
 - [[devops/docker/how-to/logs-and-debugging|Логи и отладка]]

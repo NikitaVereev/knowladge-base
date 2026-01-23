@@ -63,5 +63,5 @@ docker rm my-web-server
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/architecture|Как это работает изнутри]]
+- [[docs/devops/docker/explanation/1-architecture|Как это работает изнутри]]
 - [[devops/docker/how-to/manage-lifecycle|Управление жизненным циклом контейнера (подробнее)]]
