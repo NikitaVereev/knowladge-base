@@ -82,4 +82,4 @@ docker volume prune
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/storage-types|Типы хранилищ: Volumes vs Bind Mounts]]
+- [[4-storage-types|Типы хранилищ: Volumes vs Bind Mounts]]

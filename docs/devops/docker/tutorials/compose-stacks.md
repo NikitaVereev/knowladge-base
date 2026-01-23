@@ -71,5 +71,5 @@ volumes:
 ```
 
 ## Связанные материалы
-- [[devops/docker/explanation/compose-intro|Введение в Compose]]
+- [[5-compose|Введение в Compose]]
 - [[devops/docker/how-to/manage-compose-apps|Команды управления]]

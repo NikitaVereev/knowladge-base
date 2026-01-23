@@ -99,5 +99,5 @@ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive 
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/images-and-layers|Как устроены слои]]
+- [[2-images-and-layers|Как устроены слои]]
 - [[devops/docker/reference/dockerfile-instructions|Справочник Dockerfile]]

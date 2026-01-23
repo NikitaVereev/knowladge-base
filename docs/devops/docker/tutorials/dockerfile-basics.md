@@ -80,4 +80,4 @@ CMD ["python", "app.py"]
 ## Связанные материалы
 
 - [[devops/docker/reference/dockerfile-instructions|Справочник инструкций]]
-- [[devops/docker/explanation/images-and-layers|Понимание слоев]]
+- [[2-images-and-layers|Понимание слоев]]

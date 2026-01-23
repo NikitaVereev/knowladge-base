@@ -74,5 +74,5 @@ gunzip -c my-app.tar.gz | docker load
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/images-and-layers|Как работают слои]]
+- [[2-images-and-layers|Как работают слои]]
 - [[devops/docker/tutorials/optimize-images|Оптимизация размера образов]]

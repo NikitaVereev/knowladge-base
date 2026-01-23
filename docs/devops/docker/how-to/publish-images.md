@@ -96,5 +96,5 @@ curl http://localhost:5000/v2/myapp/tags/list
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/image-registries|Типы реестров]]
+- [[6-image-registries|Типы реестров]]
 - [[devops/docker/tutorials/ci-cd-basics|Автоматизация сборки и публикации]]

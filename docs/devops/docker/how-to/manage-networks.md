@@ -66,5 +66,5 @@ docker run --rm --network my-app-net alpine ping db
 
 ## Связанные материалы
 
-- [[devops/docker/explanation/networking-modes|Теория сетевых режимов]]
+- [[3-networking-modes|Теория сетевых режимов]]
 - [[devops/docker/tutorials/docker-compose-basics|Сети в Docker Compose (проще!)]]
