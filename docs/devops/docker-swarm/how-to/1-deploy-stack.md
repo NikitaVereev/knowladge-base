@@ -88,4 +88,4 @@ secrets:
 ## Связанные материалы
 - [[2-manage-secrets|Управление секретами]]
 - [[6-configure-healthchecks|Настройка Healthchecks]]
-- [[1-cli-commands|Команды CLI]]
+- [[docs/devops/docker-swarm/reference/1-cli-commands|Команды CLI]]

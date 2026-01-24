@@ -91,6 +91,6 @@ Docker создает виртуальные сети и подключает к
 
 ## Связанные материалы
 
-- [[devops/docker/tutorials/quickstart|Быстрый старт: запуск первого контейнера]]
-- [[devops/docker/how-to/install-ubuntu-2404|Установка Docker]]
+- [[1-quickstart|Быстрый старт: запуск первого контейнера]]
+- [[1-install-docker|Установка Docker]]
 

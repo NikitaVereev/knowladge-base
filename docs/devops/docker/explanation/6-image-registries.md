@@ -43,5 +43,5 @@ Docker определяет, куда стучаться, по первой ча
 
 ## Связанные материалы
 
-- [[devops/docker/how-to/publish-images|Публикация образов в реестры]]
-- [[devops/docker/reference/versioning-strategy|Стратегии тегирования и версионирование]]
+- [[8-publish-images|Публикация образов в реестры]]
+- [[5-versioning-strategy|Стратегии тегирования и версионирование]]

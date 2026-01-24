@@ -10,8 +10,8 @@ description: "Как создать проект, запустить машин�
 ```bash
 mkdir my-project
 cd my-project
-# Создаст конфиг на базе Ubuntu 24.04
-vagrant init ubuntu/noble64
+# Создаст конфиг на базе Ubuntu 22.04
+vagrant init ubuntu/jammy64
 ```
 
 ## 2. Запуск (Up)
