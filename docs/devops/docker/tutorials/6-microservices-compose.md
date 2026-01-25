@@ -1,5 +1,5 @@
 ---
-title: "6 Микросервисы: Профили и Монорепозиторий"
+title: "6 Микросервисы - Профили и Монорепозиторий"
 description: "Как управлять сложной архитектурой (Backend, Frontend, Workers, Tests) в одном docker-compose.yml с помощью Profiles."
 ---
 

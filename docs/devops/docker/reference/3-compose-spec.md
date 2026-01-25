@@ -1,114 +1,85 @@
 ---
-title: "3 Спецификация Docker Compose"
-description: "Шпаргалка по полям `compose.yaml`: Services, Volumes, Networks, Healthcheck и лимиты ресурсов."
+title: 3 Спецификация Compose (Cheat Sheet)
+description: Справочник по основным полям файла compose.yaml (версия Specification). Services, Volumes, Networks и Configs.
 ---
 
-## Полный пример `compose.yaml`
+## Структура верхнего уровня
 
 ```yaml
-# version: "3.8"  <-- Больше не нужно в V2
+version: "3.8"  # (Устарело в Spec, но часто встречается)
+name: my-project # Явное имя проекта
 
-name: my-project  # Имя проекта (влияет на префикс контейнеров/сетей)
+services: ...   # Контейнеры
+networks: ...   # Сетевые настройки
+volumes: ...    # Именованные тома
+secrets: ...    # Секреты (Swarm / Inject)
+configs: ...    # Конфигурации (Swarm / Inject)
+```
 
-services:
-  web:
-    image: nginx:alpine
-    container_name: my-web-custom-name  # Лучше не использовать, если планируете scale
-    build:
-      context: .              # Папка сборки
-      dockerfile: Dockerfile  # Имя файла
-      args:
-        APP_ENV: production
-      target: production      # Для multi-stage билдов
-    
-    ports:
-      - "8080:80"             # Host:Container
-    
-    environment:
-      - NODE_ENV=production
-      - DB_HOST=db
-    env_file:                 # Загрузка переменных из файла
-      - .env
+## Service Configuration
 
-    volumes:
-      - ./data:/app/data:ro   # Bind Mount (Read Only)
-      - db_data:/var/lib/mysql # Named Volume
+Основные поля для блока `services -> my-service`.
 
-    depends_on:
-      db:
-        condition: service_healthy # Ждать, пока база реально не заработает (а не просто запустится)
-      redis:
-        condition: service_started
+### Сборка и Образ
+| Поле | Описание |
+| :--- | :--- |
+| `image` | Имя образа (будет скачан или использован после build). |
+| `build` | Путь к папке (`.`) или объект. |
+| `build.context` | Путь к контексту сборки. |
+| `build.dockerfile` | Имя Dockerfile (если не стандартное). |
+| `build.args` | Переменные сборки (`ARG`). |
+| `build.target` | Целевой этап (для multi-stage). |
 
-    networks:
-      - backend
-      - frontend
+### Запуск и Ресурсы
+| Поле | Описание |
+| :--- | :--- |
+| `command` | Переопределяет `CMD`. |
+| `entrypoint` | Переопределяет `ENTRYPOINT`. |
+| `container_name` | Жесткое имя контейнера (ломает масштабирование!). |
+| `restart` | Политика перезапуска (`unless-stopped`, `on-failure`). |
+| `deploy.replicas` | Количество копий (при `--compatibility` или в Swarm). |
+| `deploy.resources` | Лимиты (`limits: { cpus: '0.5', memory: '512M' }`). |
 
-    restart: unless-stopped   # Политика перезапуска
+### Сеть и Порты
+| Поле | Описание |
+| :--- | :--- |
+| `ports` | Публикация портов (`- "8080:80"`). |
+| `expose` | Открыть порт только внутри сети Docker (не наружу). |
+| `networks` | Список сетей, к которым подключен сервис. |
+| `extra_hosts` | Доп. записи в `/etc/hosts` (`host-gateway`). |
+| `dns` | Кастомный DNS сервер. |
 
-    # Лимиты ресурсов (Работает и без Swarm в V2)
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'        # 50% ядра
-          memory: 512M        # Максимум RAM
+### Данные и Конфигурация
+| Поле | Описание |
+| :--- | :--- |
+| `volumes` | Монтирование (`- ./data:/app/data`). |
+| `environment` | Переменные (`- DEBUG=1` или словарь). |
+| `env_file` | Путь к файлу с переменными (`.env`). |
+| `secrets` | Подключение секретов в `/run/secrets`. |
+| `healthcheck` | Проверка здоровья (`test: ["CMD", "curl", ...]`). |
+| `depends_on` | Порядок запуска (`condition: service_healthy`). |
+| `profiles` | Теги для условного запуска (`["dev", "test"]`). |
 
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_PASSWORD: secret
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - backend
+## Networks
 
-# Объявление томов
-volumes:
-  db_data:
-    driver: local
-
-# Объявление сетей
+```yaml
 networks:
-  backend:
-    internal: true  # Сеть без доступа в интернет (только внутри)
-  frontend:
-    driver: bridge
+  app-net:
+    driver: bridge # Стандартный драйвер
+    internal: true # Закрыть доступ в интернет
+    ipam: ...      # Настройка подсетей (subnet)
+  shared-net:
+    external: true # Сеть создана вручную (не удалять при down)
 ```
 
-## Ключевые поля
+## Volumes
 
-### `build`
-Описание того, как собирать образ, если он не скачивается.
 ```yaml
-build:
-  context: ./backend
-  dockerfile: Dockerfile.dev
+volumes:
+  db-data:
+    driver: local
+  nfs-data:
+    driver_opts: ... # Подключение NFS/CIFS
+  backup-vol:
+    external: true # Внешний том
 ```
-
-### `depends_on`
-Определяет порядок запуска.
-*   `condition: service_started` (по умолчанию): Ждет только запуска контейнера.
-*   `condition: service_healthy`: Ждет, пока `healthcheck` не вернет "healthy". **Используйте для баз данных.**
-
-### `healthcheck`
-Команда внутри контейнера, которая сообщает Docker, живо ли приложение.
-```yaml
-healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost"]
-  interval: 1m30s
-  timeout: 10s
-  retries: 3
-```
-
-### `deploy.resources`
-В старых версиях лимиты задавались через `mem_limit`. В современной спецификации (v3 / Compose Spec) это делается через секцию `deploy`.
-> **Важно:** В Docker Compose V2 секция `deploy` работает и при обычном запуске (`docker compose up`), а не только в режиме Swarm.
-
-### `ports` vs `expose`
-*   **`ports`**: `- "8080:80"` — Открывает порт наружу (на хост-машину).
-*   **`expose`**: `- "80"` — Просто делает порт доступным для *других контейнеров* (и для линковки), но не пробрасывает на хост.

@@ -1,83 +1,127 @@
 ---
-title: "1 Установка Docker на Ubuntu 24.04"
-description: "Актуальное руководство (2025/26) по установке Docker Engine, настройке Rootless режима и плагина Compose v2."
+title: 1 Установка Docker (Linux)
+description: Актуальный гайд (2025/26) по установке Docker Engine на Ubuntu 24.04 и Arch Linux. Настройка прав (non-root) и автозапуск.
 ---
 
-В Ubuntu 24.04 `docker.io` из стандартных репозиториев может быть не самой свежей версии. Рекомендуется ставить **Docker CE (Community Edition)** из официального репозитория Docker.
+## 1. Ubuntu 22.04 / 24.04 (Debian-based)
 
-## Шаг 1: Подготовка системы
+Официальная документация: [Install on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
-Удалите старые или конфликтующие пакеты (если они были):
+Мы используем официальный репозиторий Docker и современный формат `deb822` (`.sources`), который является стандартом для новых версий Ubuntu.
+
+### Шаг 1. Удаление конфликтных пакетов
 ```bash
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 ```
 
-## Шаг 2: Установка репозитория
+### Шаг 2. Настройка репозитория
+Устанавливаем необходимые утилиты и GPG-ключ:
 
-1.  Обновите индексы и поставьте зависимости:
-    ```bash
-    sudo apt-get update
-    sudo apt-get install ca-certificates curl
-    ```
+```bash
+# 1. Обновляем индекс пакетов
+sudo apt-get update
+sudo apt-get install ca-certificates curl
 
-2.  Добавьте официальный GPG-ключ Docker:
-    ```bash
-    sudo install -m 0755 -d /etc/apt/keyrings
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    sudo chmod a+r /etc/apt/keyrings/docker.asc
-    ```
+# 2. Скачиваем официальный GPG ключ Docker
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-3.  Добавьте репозиторий в источники `apt`:
-    ```bash
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    
-    sudo apt-get update
-    ```
+# 3. Добавляем репозиторий (формат deb822)
+echo "Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc" | \
+sudo tee /etc/apt/sources.list.d/docker.sources > /dev/null
 
-## Шаг 3: Установка Docker Engine
+# 4. Обновляем кэш apt
+sudo apt-get update
+```
 
-Установите сам движок, CLI, containerd и плагины (Buildx и Compose):
+### Шаг 3. Установка пакетов
 ```bash
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-Проверьте, что демон запущен:
+### Шаг 4. Проверка
 ```bash
-sudo systemctl status docker
+sudo docker run hello-world
 ```
 
-## Шаг 4: Настройка прав (Post-install)
+---
 
-По умолчанию Docker работает только через `sudo`. Чтобы запускать его от вашего пользователя:
+## 2. Arch Linux / Manjaro
 
-1.  Создайте группу `docker` (обычно создается при установке) и добавьте себя в нее:
+Wiki: [Docker - ArchWiki](https://wiki.archlinux.org/title/Docker)
+
+В Arch Linux пакеты Docker находятся в официальном репозитории `extra`.
+
+### Шаг 1. Установка
+```bash
+sudo pacman -Syu
+sudo pacman -S docker docker-compose
+```
+
+### Шаг 2. Запуск демона
+В Arch сервисы не стартуют автоматически после установки.
+```bash
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+---
+
+## 3. Post-installation (Настройка прав)
+
+Документация: [Linux Post-install steps](https://docs.docker.com/engine/install/linux-postinstall/)
+
+По умолчанию демон Docker работает от `root`, поэтому все команды требуют `sudo`. Чтобы работать от своего пользователя:
+
+1.  **Создайте группу** (обычно создается при установке):
+    ```bash
+    sudo groupadd docker
+    ```
+
+2.  **Добавьте себя в группу**:
     ```bash
     sudo usermod -aG docker $USER
     ```
 
-2.  **Важно:** Примените изменения групп. Либо перезайдите в систему (Logout/Login), либо выполните:
+3.  **Примените изменения**:
+    Самый надежный способ — выйти из системы (Log Out) и зайти снова.
+    Быстрый способ (в текущей сессии):
     ```bash
     newgrp docker
     ```
 
-3.  Проверьте работу без sudo:
+4.  **Проверка (без sudo)**:
     ```bash
-    docker run hello-world
+    docker ps
+    # Должен вывести пустой список, а не "permission denied".
     ```
 
-## Полезные настройки (Log Rotation)
-По умолчанию Docker хранит логи вечно, что может забить диск. Создайте файл `/etc/docker/daemon.json`:
+## 4. Настройка ротации логов
 
-```json
-{
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m",
-    "max-file": "3"
-  }
-}
-```
-После этого: `sudo systemctl restart docker`.
+По умолчанию Docker хранит логи вечно. Это может забить диск за пару недель активной работы.
+
+1.  Откройте (или создайте) файл конфига:
+    ```bash
+    sudo nano /etc/docker/daemon.json
+    ```
+
+2.  Вставьте настройки:
+    ```json
+    {
+      "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "10m",
+        "max-file": "3"
+      }
+    }
+    ```
+
+3.  Перезапустите Docker:
+    ```bash
+    sudo systemctl restart docker
+    ```

@@ -1,5 +1,5 @@
 ---
-title: "5 Оптимизация: Multi-stage Build"
+title: "5 Оптимизация - Multi-stage Build"
 description: "Как уменьшить размер Docker-образа в 20 раз (с 1 ГБ до 50 МБ) с помощью многоэтапной сборки."
 ---
 
