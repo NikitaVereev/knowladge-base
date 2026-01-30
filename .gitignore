@@ -35,3 +35,4 @@ logs/
 # Cache
 quartz/.quartz-cache
 # Hidden
+docs/structure_map.md
