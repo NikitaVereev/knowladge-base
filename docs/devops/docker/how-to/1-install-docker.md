@@ -1,23 +1,98 @@
 ---
-title: 1 Установка Docker (Linux)
-description: Актуальный гайд (2025/26) по установке Docker Engine на Ubuntu 24.04 и Arch Linux. Настройка прав (non-root) и автозапуск.
+title: 1 Установка Docker
+type: how-to
+tags: [docker, install, rootless, hardening, ubuntu, arch-linux]
 ---
 
-## 1. Ubuntu 22.04 / 24.04 (Debian-based)
+# Установка Docker
 
-Официальная документация: [Install on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+В этом руководстве рассматриваются два сценария установки:
+1.  **Rootless Mode:** Демон и контейнеры работают от обычного пользователя. Идеально для рабочих станций и безопасных CI-агентов.
+2.  **Rootful + Hardening:** Классический системный демон с усиленной безопасностью. Для production-серверов, где требуются привилегированные порты (<1024) или специфические драйверы.
 
-Мы используем официальный репозиторий Docker и современный формат `deb822` (`.sources`), который является стандартом для новых версий Ubuntu.
+---
 
-### Шаг 1. Удаление конфликтных пакетов
+## Вариант 1: Rootless Mode (Без прав root)
+
+В этом режиме `dockerd` работает внутри User Namespace. Злоумышленник, сбежавший из контейнера, не получит прав root на хосте.
+
+### 1. Подготовка (Prerequisites)
+
+Вам потребуется пакет `uidmap` и наличие диапазонов subuid/subgid.
+
+**Ubuntu 24.04+:**
 ```bash
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+sudo apt-get update && sudo apt-get install -y uidmap
 ```
 
-### Шаг 2. Настройка репозитория
-Устанавливаем необходимые утилиты и GPG-ключ:
+**Arch Linux:**
+```bash
+sudo pacman -Syu docker docker-compose
+# В Arch сам пакет docker не запускает демон, он нужен только для CLI и скриптов.
+```
+
+**Проверка subuid (Важно!):**
+Убедитесь, что для вашего пользователя есть записи (обычно они создаются автоматически при создании пользователя):
+```bash
+grep "^$(whoami):" /etc/subuid
+grep "^$(whoami):" /etc/subgid
+# Вывод должен быть вида: user:100000:65536
+```
+*Если вывод пуст, добавьте диапазоны вручную:*
+```bash
+sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $(whoami)
+```
+
+### 2. Установка (Скрипт)
+
+Не используйте `sudo`!
 
 ```bash
+# Остановите системный докер, если он был запущен
+sudo systemctl disable --now docker.service docker.socket
+
+# Запуск скрипта установки
+curl -fsSL https://get.docker.com/rootless | sh
+```
+
+### 3. Настройка окружения
+
+Скрипт подскажет переменные, которые нужно добавить в `~/.bashrc` или `~/.zshrc`. Обычно это:
+
+```bash
+export PATH=/home/$(whoami)/bin:$PATH
+export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
+```
+
+Примените изменения: `source ~/.bashrc`
+
+### 4. Запуск и Автозагрузка
+
+```bash
+systemctl --user start docker
+systemctl --user enable docker
+
+# Чтобы демон запускался при рестарте сервера (даже без логина пользователя)
+sudo loginctl enable-linger $(whoami)
+```
+
+---
+
+## Вариант 2: Rootful Mode (Системный демон)
+
+Используйте этот вариант, если вам нужен доступ к системным ресурсам или вы управляете кластером через Ansible/Chef.
+
+### 1. Установка
+
+#### Ubuntu 24.04 / Debian
+Официальная документация: [Install on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
+Удаляем конфликтующие пакеты и ставим официальную версию.
+
+```bash
+# Удаление старых версий
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
 # 1. Обновляем индекс пакетов
 sudo apt-get update
 sudo apt-get install ca-certificates curl
@@ -37,91 +112,58 @@ sudo tee /etc/apt/sources.list.d/docker.sources > /dev/null
 
 # 4. Обновляем кэш apt
 sudo apt-get update
-```
 
-### Шаг 3. Установка пакетов
-```bash
+# Установка
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-### Шаг 4. Проверка
-```bash
-sudo docker run hello-world
-```
-
----
-
-## 2. Arch Linux / Manjaro
-
+#### Arch Linux
 Wiki: [Docker - ArchWiki](https://wiki.archlinux.org/title/Docker)
 
 В Arch Linux пакеты Docker находятся в официальном репозитории `extra`.
 
-### Шаг 1. Установка
 ```bash
 sudo pacman -Syu
 sudo pacman -S docker docker-compose
 ```
 
-### Шаг 2. Запуск демона
-В Arch сервисы не стартуют автоматически после установки.
-```bash
-sudo systemctl start docker
-sudo systemctl enable docker
+### 2. Hardening
+
+Не добавляйте пользователя в группу `docker` бездумно! Вместо этого настройте демона.
+
+#### Конфигурация `/etc/docker/daemon.json`
+```json
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "no-new-privileges": true,
+  "live-restore": true,
+  "userland-proxy": false,
+  "icc": false
+}
 ```
+* `log-opts`: Ограничивает размер лог-файл 10Мб и хранит 3 последние копии.
+* `"no-new-privileges": true`: Блокирует setuid-бинарники внутри контейнеров.
+* `live-restore`: Позволяет контейнерам работать, даже если демон Docker перезагружается (обновляется)
+* `userland-proxy`: Отключает прокси-процесс для проброса портов (использует только iptables), экономя память.
+* `"icc": false`: Запрещает контейнерам в дефолтной сети `bridge` общаться друг с другом (изоляция).
+
+Примените: `sudo systemctl restart docker`
 
 ---
 
-## 3. Post-installation (Настройка прав)
+## Проверка установки
 
-Документация: [Linux Post-install steps](https://docs.docker.com/engine/install/linux-postinstall/)
+Независимо от метода, проверьте версию и контекст безопасности.
 
-По умолчанию демон Docker работает от `root`, поэтому все команды требуют `sudo`. Чтобы работать от своего пользователя:
+```bash
+docker info
+# Ищите строку "Security Options".
+# В Rootless там будет "rootless".
+# В Rootful ищите "seccomp", "apparmor".
 
-1.  **Создайте группу** (обычно создается при установке):
-    ```bash
-    sudo groupadd docker
-    ```
-
-2.  **Добавьте себя в группу**:
-    ```bash
-    sudo usermod -aG docker $USER
-    ```
-
-3.  **Примените изменения**:
-    Самый надежный способ — выйти из системы (Log Out) и зайти снова.
-    Быстрый способ (в текущей сессии):
-    ```bash
-    newgrp docker
-    ```
-
-4.  **Проверка (без sudo)**:
-    ```bash
-    docker ps
-    # Должен вывести пустой список, а не "permission denied".
-    ```
-
-## 4. Настройка ротации логов
-
-По умолчанию Docker хранит логи вечно. Это может забить диск за пару недель активной работы.
-
-1.  Откройте (или создайте) файл конфига:
-    ```bash
-    sudo nano /etc/docker/daemon.json
-    ```
-
-2.  Вставьте настройки:
-    ```json
-    {
-      "log-driver": "json-file",
-      "log-opts": {
-        "max-size": "10m",
-        "max-file": "3"
-      }
-    }
-    ```
-
-3.  Перезапустите Docker:
-    ```bash
-    sudo systemctl restart docker
-    ```
+docker run --rm hello-world
+```
