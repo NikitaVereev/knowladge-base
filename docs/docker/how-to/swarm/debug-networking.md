@@ -22,6 +22,9 @@ docker service create --name debug --network my-net --mode global nicolaka/netsh
 Зайдите в контейнер:
 ```bash
 # Найдите ID контейнера на текущей ноде
+
+> **TL;DR:** Overlay не работает? Проверь: порты 7946+4789 открыты, ноды видят друг друга,
+> `docker network inspect` показывает peers. Netshoot — для глубокой диагностики.
 docker ps | grep debug
 docker exec -it <container-id> zsh
 ```
@@ -40,4 +43,14 @@ dig my-web-service
 *   **UDP/4789**: Overlay Network Traffic (VXLAN)
 
 Если 4789 закрыт, сервисы будут создаваться, но `ping` между ними ходить не будет.
+
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| Файрвол блокирует VXLAN (UDP 4789) | Контейнеры на разных нодах не видят друг друга | Открыть TCP/UDP 7946 + UDP 4789 между всеми нодами |
+| DNS не резолвится | `Could not resolve host: myservice` | Проверить: сервис в той же overlay-сети? `docker service inspect` |
+| VIP не отвечает | Сервис `healthy`, но трафик не идёт | Проверить `docker network inspect` → IPAM, Peers. Перезапустить `ingress` |
+| Netshoot не подключается к overlay | `could not attach to network` | Overlay должна быть `--attachable` для standalone контейнеров |
 

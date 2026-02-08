@@ -12,6 +12,9 @@ related:
 
 # Спецификация Compose v2 (Справочник)
 
+> **Справочник:** Полная спецификация compose.yaml — services, networks, volumes,
+> configs, secrets, deploy.
+
 Compose Specification (ранее docker-compose.yml версии 3) — это стандарт описания многоконтейнерных приложений.
 
 ## Структура файла `compose.yaml`

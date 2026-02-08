@@ -12,6 +12,9 @@ related:
 
 # Работа с приватными реестрами (Private Registry)
 
+> **TL;DR:** `docker login` → `docker push`. Для CI: логин через STDIN (безопасно).
+> Docker Hub rate limits: 100 pulls/6h анонимно. Свой registry: одна команда.
+
 В корпоративной среде образы хранятся в приватных реестрах (GitHub Container Registry, GitLab Registry, Nexus, Harbor, AWS ECR). Docker требует аутентификации для доступа к ним.
 
 ## 1. Логин (docker login)
@@ -103,3 +106,12 @@ docker push localhost:5000/my-app:v1
 1.  Зарегистрируйте бота на Docker Hub.
 2.  Сделайте `docker login`.
 3.  Лимит увеличится до 200 (Free) или станет безлимитным (Pro).
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `docker login` в CLI с паролем | Пароль в bash history | `echo $TOKEN \| docker login -u user --password-stdin` |
+| Docker Hub rate limit | `toomanyrequests: You have reached your pull rate limit` | Аутентифицироваться (200 pulls) или использовать mirror/private registry |
+| HTTP registry без TLS | `server gave HTTP response to HTTPS client` | Добавить в `daemon.json`: `"insecure-registries": ["myregistry:5000"]` |
+| Нет cleanup policy | Registry растёт бесконечно | Настроить garbage collection и retention policy |

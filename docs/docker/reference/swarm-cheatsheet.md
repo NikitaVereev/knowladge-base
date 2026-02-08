@@ -12,6 +12,8 @@ related:
 
 # Docker Swarm — Cheatsheet
 
+> **Справочник:** Все команды Docker Swarm CLI + best practices управления кластером.
+
 ## Cluster Management
 
 | Команда | Описание |

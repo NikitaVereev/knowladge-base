@@ -10,9 +10,10 @@ related:
   - "[[docker/tutorials/06-swarm-cluster]]"
 ---
 
-title: "2 Управление секретами"
-description: "Безопасное хранение паролей и сертификатов."
----
+# Управление секретами
+
+> **TL;DR:** `docker secret create` → секрет шифруется в Raft, доставляется в tmpfs
+> контейнера (`/run/secrets/`). Безопаснее ENV: не виден в inspect, не на диске.
 
 Никогда не передавайте пароли через переменные окружения (`-e PASSWORD=...`), так как они видны в `docker inspect`. Используйте Docker Secrets.
 
@@ -55,3 +56,11 @@ docker service create \
     ```
 
 
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| Секрет в ENV вместо Secret | Виден в `docker inspect`, может утечь в логи | Использовать Docker Secrets + суффикс `_FILE` |
+| Изменили секрет — сервис не обновился | Старое значение в контейнере | Секреты иммутабельны. Создать новый, обновить сервис |
+| `docker secret` вне Swarm mode | `This node is not a swarm manager` | Secrets работают только в Swarm. `docker swarm init` |
+| Права доступа к /run/secrets/ | `Permission denied` при чтении | Секреты по умолчанию доступны root. Указать `uid/gid/mode` в compose |

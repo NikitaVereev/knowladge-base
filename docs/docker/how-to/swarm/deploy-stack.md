@@ -11,6 +11,13 @@ related:
 ---
 
 
+# Развёртывание стеков
+
+> **TL;DR:** `docker stack deploy -c compose.yaml myapp` — деплой стека в Swarm.
+> Compose-файл + Swarm = декларативный production-деплой с rolling updates.
+
+
+
 Стек (Stack) — это декларативное описание всего приложения (сервисы, сети, тома, секреты) в одном файле.
 
 ## Отличия от Docker Compose
@@ -93,4 +100,11 @@ secrets:
     ```
 
 
+## Типичные ошибки
 
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `build:` в compose для Swarm | `unsupported config option: build` | Swarm не собирает образы. Пушить в registry, использовать `image:` |
+| Нет `--with-registry-auth` | Воркеры не могут pull private images | `docker stack deploy --with-registry-auth` |
+| `depends_on` в Swarm | Игнорируется | Swarm не поддерживает depends_on. Использовать healthcheck + retry в приложении |
+| Rolling update убивает все реплики | Downtime при обновлении | `update_config: parallelism: 1, delay: 10s, order: start-first` |

@@ -11,6 +11,13 @@ related:
 ---
 
 
+# Настройка сетей Swarm
+
+> **TL;DR:** Overlay-сети связывают контейнеры на разных хостах. Создаются на менеджере,
+> автоматически распространяются на воркеры при деплое сервиса.
+
+
+
 ## Создание Overlay сети
 
 Стандартная сеть для общения сервисов между нодами:
@@ -38,4 +45,14 @@ docker service create -p 80:80 nginx
 ```bash
 docker service create --publish mode=host,target=80,published=80 nginx
 ```
+
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| Одна overlay-сеть для всего | Frontend видит БД напрямую | Создать отдельные сети: frontend-net, backend-net |
+| Нет `--attachable` для docker run | `could not attach to network` | Overlay по умолчанию только для сервисов. `--attachable` для standalone контейнеров |
+| Порты 4789/7946 закрыты файрволом | Overlay не работает между хостами | Открыть: TCP/UDP 7946 (gossip), UDP 4789 (VXLAN) |
+| Encryption без оценки overhead | Скорость сети упала на 30% | `--opt encrypted` шифрует VXLAN. Использовать только для sensitive трафика |
 

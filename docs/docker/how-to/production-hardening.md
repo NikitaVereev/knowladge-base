@@ -14,7 +14,7 @@ related:
 
 # Production Hardening
 
-> Как превратить рабочий контейнер в production-ready: non-root, read-only,
+> **TL;DR:** Как превратить рабочий контейнер в production-ready: non-root, read-only,
 > минимальные привилегии, лимиты ресурсов, healthcheck.
 > Каждый пункт — конкретный код, который можно скопировать.
 
@@ -425,3 +425,4 @@ services:
 - Чек-лист: [[docker/reference/security-checklist]] — что проверить перед деплоем
 - Теория: [[docker/explanation/security]] — capabilities, seccomp, AppArmor
 - Ресурсы: [[docker/how-to/manage-resources]] — подробнее про CPU/RAM лимиты
+

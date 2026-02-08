@@ -12,6 +12,9 @@ related:
 
 # Оптимизация сборки образов
 
+> **TL;DR:** BuildKit + правильный порядок COPY + multi-stage = быстрая сборка и маленький образ.
+> Mount cache для npm/pip/go экономит минуты на каждом билде.
+
 Скорость сборки напрямую влияет на Time-to-Market и время ожидания CI/CD пайплайнов. В этом руководстве мы рассмотрим современные техники ускорения билдов с использованием **BuildKit**.
 
 ## 1. Включение BuildKit
@@ -189,3 +192,12 @@ coverage
 3.  [ ] Используется **Multi-stage** (отдельно build, отдельно runtime).
 4.  [ ] Добавлены **Mount Caches** (`--mount=type=cache`) для `npm`/`go`/`apt`.
 5.  [ ] Используется **BuildKit** (вывод сборки цветной и параллельный).
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `COPY . .` перед `npm ci` | Кэш зависимостей сбрасывается при каждом изменении кода | Сначала `COPY package*.json`, потом `npm ci`, потом `COPY . .` |
+| Нет `.dockerignore` | `node_modules` (500MB) попадает в build context | Создать `.dockerignore` с `node_modules`, `.git`, `dist` |
+| Один stage для build и runtime | Образ содержит gcc, dev-зависимости (1GB+) | Multi-stage: builder + runner |
+| `RUN apt install && RUN apt clean` | apt cache остаётся в предыдущем слое | Объединять в один `RUN`: `apt install -y pkg && rm -rf /var/lib/apt/lists/*` |

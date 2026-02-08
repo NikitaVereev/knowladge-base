@@ -14,6 +14,9 @@ next: "[[docker/tutorials/04-networking-workshop]]"
 
 # 3: Полноценная среда разработки с Docker Compose
 
+> **Цель:** Запустить App + PostgreSQL + Redis через Docker Compose.
+> Освоить healthcheck, depends_on, volumes для данных, hot reload для кода.
+
 Запускать контейнеры по одному (`docker run`) неудобно, когда их становится много. В этом уроке мы создадим реалистичный стек: **Node.js приложение**, которое хранит счетчик просмотров в **Redis**.
 
 Мы научимся связывать контейнеры, управлять зависимостями и использовать "Горячую перезагрузку" (Hot Reload) без пересборки образов.
@@ -135,3 +138,12 @@ docker compose down
 1.  **Service Discovery:** Контейнеры видят друг друга по именам (`redis-db`).
 2.  **Depends On + Healthcheck:** `web` не запустился, пока `redis` не сказал "PONG". Это предотвращает ошибки подключения при старте.
 3.  **Volumes Development:** Мы редактируем код на хосте, а выполняется он в контейнере.
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| App стартует раньше БД | `ECONNREFUSED` при подключении к PostgreSQL | `depends_on: db: condition: service_healthy` |
+| `docker compose down` удалил данные | «Где моя база?» | Данные в named volume выживают. `-v` удаляет volumes (осторожно!) |
+| Порт уже занят | `bind: address already in use` | Другой контейнер или процесс на этом порту. `docker ps` или `lsof -i :5432` |
+| Изменения в коде не видны | Hot reload не работает | Проверить: volume примонтирован? `WATCHPACK_POLLING=true` для Next.js? |

@@ -11,6 +11,13 @@ related:
 ---
 
 
+# Мониторинг кластера
+
+> **TL;DR:** `docker node ls` — состояние нод. `docker service ps` — состояние задач.
+> Prometheus + cAdvisor для метрик, Loki для логов.
+
+
+
 ## Статус нод
 
 ```bash
@@ -40,4 +47,10 @@ docker service logs -f my-web-service
 docker events --types service,node
 ```
 
+## Типичные ошибки
 
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| Мониторинг только менеджеров | Не видят проблемы на воркерах | cAdvisor/node-exporter как `global` service (на каждой ноде) |
+| `docker service logs` на большом кластере | Медленно, таймаут | Централизованное логирование (Loki, ELK) через logging driver |
+| Нет алертов на `node down` | Узнали о проблеме от пользователей | Prometheus alert на `node_up == 0` |

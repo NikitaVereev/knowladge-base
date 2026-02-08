@@ -12,6 +12,9 @@ related:
 
 # Методики отладки контейнеров
 
+> **TL;DR:** Контейнер падает? `docker logs` → `docker inspect` → `docker exec`.
+> Нет shell? Подключи netshoot. Нужно внутрь образа? Используй `dive`.
+
 Когда контейнер падает или ведет себя странно, нужно уметь быстро диагностировать проблему. В этом гайде собраны техники от базового просмотра логов до продвинутого сетевого анализа с использованием sidecar-контейнеров.
 
 ## 1. Анализ "мертвого" контейнера
@@ -108,3 +111,12 @@ docker run --rm -v my-db-data:/data -v $(pwd):/backup busybox \
   tar cvf /backup/backup.tar /data
 ```
 Теперь у вас есть архив `backup.tar` на хосте.
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `docker exec` в остановленный контейнер | `Error: container is not running` | Запустить с `docker run --entrypoint sleep ... infinity`, потом exec |
+| Distroless — нет bash/sh | `exec: "sh": not found` | Подключить `netshoot` к namespace контейнера или использовать debug image |
+| Не смотрят exit code | «Контейнер просто упал» | `docker inspect --format='{{.State.ExitCode}}'` — 137 = OOM, 1 = ошибка приложения |
+| Логи обрезаны | Старые логи недоступны | `docker logs --since 1h` или настроить централизованное логирование |

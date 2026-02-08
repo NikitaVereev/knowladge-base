@@ -73,6 +73,9 @@ docker swarm init --advertise-addr 192.168.56.11
 
 ```bash
 # На node-2
+
+> **Цель:** Поднять 3-нодовый Swarm-кластер (Vagrant/VirtualBox), задеплоить стек,
+> увидеть rolling update и self-healing в действии.
 docker swarm join --token SWMTKN-1-xxxxx 192.168.56.11:2377
 
 # На node-3
@@ -88,3 +91,12 @@ docker node ls
 ```
 
 Вы должны увидеть 3 ноды со статусом `Ready` и `Active`. Поздравляем, ваш кластер готов к деплою стеков!
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `docker swarm join` с неправильным токеном | `Error: invalid join token` | Получить свежий токен: `docker swarm join-token worker` на менеджере |
+| Воркер не видит менеджер | `connection refused` при join | Проверить: IP менеджера верный? Порт 2377 открыт? Файрвол? |
+| `docker stack deploy` с `build:` | `unsupported: build` | Swarm не собирает образы. Использовать `image:` из registry |
+| Потеряли кворум (2 из 3 менеджеров упали) | Кластер read-only, нельзя деплоить | `docker swarm init --force-new-cluster` на оставшемся менеджере |

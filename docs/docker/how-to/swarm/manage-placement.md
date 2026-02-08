@@ -19,6 +19,9 @@ related:
 
 ```bash
 # На менеджере
+
+> **TL;DR:** Labels на нодах + constraints в сервисах = контроль размещения.
+> `node.role`, `node.labels`, `engine.labels` — фильтры для placement.
 docker node update --label-add ssd=true node-1
 docker node update --label-add zone=us-east node-2
 ```
@@ -49,3 +52,11 @@ deploy:
 *   `node.role == manager`
 *   `node.hostname == db-server`
 *   `node.platform.os == linux`
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| Constraint на несуществующий label | `no suitable node (scheduling constraints not satisfied)` | Сначала `docker node update --label-add`, потом деплой |
+| БД на нескольких нодах | Конфликт данных, corruption | `constraints: [node.labels.db == true]` + одна реплика + volume |
+| `--constraint` vs `--placement-pref` | Неравномерное распределение | constraint = жёсткий фильтр, pref = мягкое предпочтение (spread) |

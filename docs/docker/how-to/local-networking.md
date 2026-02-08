@@ -12,6 +12,9 @@ related:
 
 # Локальная сеть и доступ к хосту
 
+> **TL;DR:** Хост из контейнера: `host.docker.internal`. SSH-ключи в build: `--ssh default`.
+> SSH в runtime: mount сокета агента.
+
 При локальной разработке часто возникают две проблемы:
 1.  Как из контейнера подключиться к сервису, запущенному на хосте (например, к локальному Postgres или API, запущенному без Docker)?
 2.  Как пробросить SSH-ключи в контейнер, чтобы сделать `git clone` из приватного репозитория?
@@ -123,3 +126,12 @@ services:
 docker run --network host cloudflare/cloudflared:latest tunnel --url http://localhost:8080
 ```
 *Вы получите временную ссылку `https://...trycloudflare.com`, которая ведет прямо в ваш локальный контейнер.*
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `host.docker.internal` на Linux | Не резолвится (работает только на Docker Desktop) | Добавить `--add-host=host.docker.internal:host-gateway` |
+| SSH-ключ скопирован в образ | Ключ виден в `docker history` | Использовать `--mount=type=ssh` (BuildKit) — ключ не попадает в слои |
+| SSH agent не запущен | `Could not open a connection to your authentication agent` | `eval $(ssh-agent -s) && ssh-add` перед docker build |
+| Порт уже занят | `bind: address already in use` | Проверить `lsof -i :PORT`, остановить конфликтующий процесс |

@@ -1,16 +1,3 @@
----
-title: "Docker Swarm"
-type: explanation
-tags: [docker, swarm, cluster, raft, overlay, ingress, service-discovery, vip]
-sources:
-  docs: "https://docs.docker.com/engine/swarm/"
-related:
-  - "[[docker/explanation/networking]]"
-  - "[[docker/how-to/swarm/deploy-stack]]"
-  - "[[docker/tutorials/06-swarm-cluster]]"
-  - "[[docker/reference/swarm-cheatsheet]]"
----
-
 # Docker Swarm
 
 > **TL;DR:** Docker Swarm превращает группу хостов Docker в единый виртуальный движок
@@ -104,5 +91,14 @@ related:
 ## Связанные материалы
 
 - Практика: [[docker/how-to/swarm/deploy-stack]] — развёртывание стеков
-- Рецепт: [[06-swarm-cluster]] — создание кластера на Vagrant
+- Рецепт: [[docker/tutorials/06-swarm-cluster]] — создание кластера на Vagrant
 - Справка: [[docker/reference/swarm-cheatsheet]] — команды Swarm CLI
+
+## Подводные камни
+
+| Заблуждение | Реальность |
+|------------|-----------|
+| «Swarm устарел — нужен только K8s» | Swarm проще, встроен в Docker, идеален для малых команд (до ~50 нод) |
+| «3 менеджера = отказоустойчивость» | При потере 2 из 3 менеджеров — кворум потерян, кластер read-only |
+| «Overlay сеть медленная» | VXLAN overhead ~5%. Bottleneck обычно в приложении, не в сети |
+| «Swarm балансирует равномерно» | Ingress Routing Mesh — round-robin. Для sticky sessions нужен внешний LB |

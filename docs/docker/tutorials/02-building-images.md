@@ -14,6 +14,9 @@ next: "[[docker/tutorials/03-compose-app]]"
 
 # 2: Dockerfile
 
+> **Цель:** Написать Dockerfile: от наивного (1GB) до production-ready (150MB).
+> Освоить multi-stage builds, кэширование слоёв, .dockerignore.
+
 Написать `Dockerfile` — легко. Написать **хороший** `Dockerfile` — искусство.
 В этом уроке мы возьмем простое Node.js приложение и пройдем путь от "плохого" образа (800 МБ, root, небезопасно) к "идеальному" (100 МБ, non-root, кэширование).
 
@@ -150,3 +153,12 @@ CMD ["node", "index.js"]
 2.  Собирается быстро (Layer Caching).
 3.  Безопасен (Non-root user).
 4.  Не содержит мусора (`.dockerignore`).
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `COPY . .` до `npm install` | Каждое изменение кода сбрасывает кэш зависимостей | Сначала `COPY package*.json`, потом `npm ci`, потом `COPY . .` |
+| Нет `.dockerignore` | Build context 500MB+, сборка медленная | Добавить `node_modules`, `.git`, `dist` в `.dockerignore` |
+| `CMD npm start` (shell form) | SIGTERM не доходит до Node.js, `docker stop` зависает 10 сек | `CMD ["npm", "start"]` (exec form) или tini |
+| `FROM node:latest` | Непредсказуемый образ: сегодня Node 20, завтра Node 22 | Фиксировать версию: `FROM node:20-alpine` |

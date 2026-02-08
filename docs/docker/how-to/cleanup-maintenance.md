@@ -12,6 +12,9 @@ related:
 
 # Обслуживание Docker хоста
 
+> **TL;DR:** `docker system prune` — быстрая очистка. `docker system df` — анализ.
+> Без ротации логов Docker заполнит диск. Автоматизируй через cron.
+
 Со временем Docker хост накапливает "мусор": остановленные контейнеры, старые версии образов, неиспользуемые тома и гигабайты логов. Без регулярного обслуживания это приведет к ошибке `No space left on device`.
 
 ## 1. Очистка диска (Garbage Collection)
@@ -118,3 +121,12 @@ truncate -s 0 $LOG_PATH
 0 3 * * 0 /usr/bin/docker image prune -f && /usr/bin/docker builder prune -f
 ```
 *(Не используйте `system prune -a` в кроне, если не уверены на 100%, что это безопасно для вашего workflow).*
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| `docker system prune -a` на проде | Удалил все образы, включая рабочие | Без `-a` — удаляются только dangling. С `-a` — все неиспользуемые |
+| Не настроена ротация логов | `/var/lib/docker/containers/` заполнил диск | `daemon.json`: `max-size: 10m`, `max-file: 3` |
+| `docker volume prune` без проверки | Удалил данные БД | Всегда проверяй `docker volume ls` перед prune |
+| Забыли про build cache | `docker system df` показывает 50GB cache | `docker builder prune` — отдельная команда для кэша |

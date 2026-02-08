@@ -12,6 +12,9 @@ related:
 
 # Docker CI/CD Pipeline с GitHub Actions
 
+> **TL;DR:** GitHub Actions workflow: checkout → login GHCR → build + cache → push.
+> Образ тегируется SHA коммита для трейсабельности.
+
 В этом руководстве мы создадим полноценный, Production-ready пайплайн для сборки и доставки Docker-образов. Мы реализуем все принципы, описанные в разделе *Explanation*: кэширование, сканирование безопасности, мультиплатформенную сборку и правильное версионирование.
 
 ## Цели пайплайна
@@ -162,3 +165,12 @@ jobs:
     ```bash
     echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
     ```
+
+## Типичные ошибки
+
+| Ошибка | Симптом | Решение |
+|--------|---------|---------|
+| Нет `--cache-from` / `--cache-to` | Каждый билд с нуля (5-10 мин вместо 1 мин) | Использовать `type=gha` cache в `docker/build-push-action` |
+| `GITHUB_TOKEN` без write:packages | `denied: permission_denied` при push | Добавить `permissions: packages: write` в workflow |
+| Тег `latest` в production | Непонятно какая версия задеплоена | Тегировать `sha-<commit>` или `v1.2.3` |
+| Секреты в build args | Видны в `docker history` | Использовать `--secret` в BuildKit |
