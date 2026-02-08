@@ -104,5 +104,5 @@ related:
 ## Связанные материалы
 
 - Практика: [[docker/how-to/swarm/deploy-stack]] — развёртывание стеков
-- Рецепт: [[docker/tutorials/05-swarm-cluster]] — создание кластера на Vagrant
+- Рецепт: [[06-swarm-cluster]] — создание кластера на Vagrant
 - Справка: [[docker/reference/swarm-cheatsheet]] — команды Swarm CLI

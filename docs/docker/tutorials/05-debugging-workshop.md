@@ -1,5 +1,5 @@
 ---
-title: "04. Отладка контейнеров"
+title: "05. Отладка контейнеров"
 type: tutorial
 tags: [docker, tutorial, debug, logs, exec, network, troubleshooting]
 sources:
