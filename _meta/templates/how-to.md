@@ -1,13 +1,16 @@
 ---
-title: "Как сделать X"
+title: Как сделать X
 type: how-to
-tags: [инструмент, задача, тема1]
+tags:
+  - инструмент
+  - задача
+  - тема1
 sources:
-  docs: "https://..."
-  book: "Название книги — Автор, Глава N"
+  docs: https://...
+  book: Название книги — Автор, Глава N
 related:
   - "[[explanation/почему-это-так]]"
-  - "[[reference/cheatsheet]]"
+  - "[[docs/docker/reference/cheatsheet]]"
 ---
 
 # Как сделать X

@@ -1,14 +1,18 @@
 ---
-title: "Название концепции"
+title: Название концепции
 type: explanation
-tags: [инструмент, тема1, тема2, тема3]
+tags:
+  - инструмент
+  - тема1
+  - тема2
+  - тема3
 sources:
-  docs: "https://..."
-  book: "Название книги — Автор, Глава N"
+  docs: https://...
+  book: Название книги — Автор, Глава N
 related:
   - "[[how-to/практическое-применение]]"
   - "[[tutorials/где-это-используется]]"
-  - "[[reference/cheatsheet]]"
+  - "[[docs/docker/reference/cheatsheet]]"
 ---
 
 # Название концепции
@@ -56,4 +60,4 @@ related:
 
 - Практика: [[how-to/...]] — как применить на деле
 - Рецепт: [[how-to/recipes/...]] — готовый конфиг
-- Справка: [[reference/cheatsheet]] — команды
+- Справка: [[docs/docker/reference/cheatsheet]] — команды

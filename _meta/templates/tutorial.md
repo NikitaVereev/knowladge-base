@@ -1,15 +1,18 @@
 ---
-title: "00. Название урока"
+title: 00. Название урока
 type: tutorial
-tags: [инструмент, тема1, тема2]
+tags:
+  - инструмент
+  - тема1
+  - тема2
 sources:
-  docs: "https://..."
-  book: "Название книги — Автор, Глава N"
+  docs: https://...
+  book: Название книги — Автор, Глава N
 related:
   - "[[explanation/связанная-тема]]"
   - "[[how-to/связанная-задача]]"
-  - "[[reference/cheatsheet]]"
-prev: null                    # "[[предыдущий-урок]]" или null для первого
+  - "[[docs/docker/reference/cheatsheet]]"
+prev:
 next: "[[следующий-урок]]"
 ---
 
