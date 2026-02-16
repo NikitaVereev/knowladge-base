@@ -17,6 +17,7 @@ tags: [kubernetes, k8s, orchestration, containers, cloud-native]
 | [[kubernetes/explanation/workload-resources]] | Pod, Deployment, StatefulSet, DaemonSet, Job, CronJob |
 | [[kubernetes/explanation/networking]] | Service типы (ClusterIP, NodePort, LB), Headless, Ingress, DNS |
 | [[kubernetes/explanation/storage]] | PV, PVC, StorageClass, Dynamic Provisioning, Access Modes, Reclaim Policy |
+| [[kubernetes/explanation/helm-objects]] | Встроенные объекты шаблонов: Release, Values, Chart, Files, Capabilities, Template |
 
 ## How-to (Практические руководства)
 
