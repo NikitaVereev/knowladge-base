@@ -17,6 +17,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/permissions-model]] | rwx, chmod, chown, SUID/SGID/sticky, sudo |
 | [[linux/explanation/process-model]] | PID, состояния, сигналы, nice, foreground/background, daemons |
 | [[linux/explanation/systemd]] | PID 1, units, targets, timers, journalctl, boot process |
+| [[linux/explanation/shutdown]] | Процесс завершения: targets, SIGTERM → SIGKILL, sync, umount, graceful shutdown |
 
 ## Tutorials (Пошаговые уроки)
 

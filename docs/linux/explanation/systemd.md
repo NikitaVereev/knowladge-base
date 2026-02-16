@@ -8,6 +8,7 @@ related:
   - "[[linux/explanation/process-model]]"
   - "[[linux/how-to/manage-services]]"
   - "[[linux/reference/systemd-reference]]"
+  - "[[linux/explanation/shutdown]]"
 ---
 
 # systemd

@@ -8,6 +8,7 @@ related:
   - "[[linux/explanation/systemd]]"
   - "[[linux/reference/cheatsheet]]"
   - "[[linux/how-to/manage-services]]"
+  - "[[linux/explanation/shutdown]]"
 ---
 
 # Процессы и сервисы
