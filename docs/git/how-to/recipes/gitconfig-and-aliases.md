@@ -5,6 +5,7 @@ tags: [git, recipe, config, aliases, gitconfig, hooks, workflow]
 related:
   - "[[git/reference/cheatsheet]]"
   - "[[git/tutorials/01-basics]]"
+  - "[[git/how-to/commit-conventions]]"
 ---
 
 # Рецепт: .gitconfig и алиасы

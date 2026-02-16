@@ -1,7 +1,7 @@
 ---
 title: "Модели ветвления"
 type: explanation
-tags: [git, explanation, branching, gitflow, trunk-based, github-flow]
+tags: [git, explanation, branching, gitflow, trunk-based, github-flow, conventional-commits]
 related:
   - "[[git/tutorials/02-branching]]"
   - "[[git/tutorials/03-collaboration]]"

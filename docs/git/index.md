@@ -29,6 +29,7 @@ tags: [git, vcs, version-control, github, branching]
 |----------|----------|
 | [[git/how-to/interactive-rebase]] | squash, reword, reorder, edit, drop коммитов |
 | [[git/how-to/undo-mistakes]] | amend, reset, revert, restore, reflog, cherry-pick |
+| [[git/how-to/commit-conventions]] | Conventional Commits, commitlint + husky, автоматический CHANGELOG |
 
 ## Recipes
 
