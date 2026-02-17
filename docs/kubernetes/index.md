@@ -45,6 +45,7 @@ tags: [kubernetes, k8s, orchestration, containers, cloud-native]
 | [[kubernetes/reference/cheatsheet]] | kubectl: get, describe, logs, exec, apply, rollout, port-forward |
 | [[kubernetes/reference/yaml-templates]] | Шаблоны манифестов: Pod, Deployment, Service, Ingress, PVC |
 | [[kubernetes/reference/resource-reference]] | Все ресурсы: Kind, Short, apiVersion, NS, описание |
+| [[kubernetes/reference/helm-functions]] | Функции шаблонов Helm: строки, числа, списки, словари, крипто, валидация |
 
 ## Tutorials (Пошаговые уроки)
 
