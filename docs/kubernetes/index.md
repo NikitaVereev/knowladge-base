@@ -18,6 +18,7 @@ tags: [kubernetes, k8s, orchestration, containers, cloud-native]
 | [[kubernetes/explanation/networking]] | Service типы (ClusterIP, NodePort, LB), Headless, Ingress, DNS |
 | [[kubernetes/explanation/storage]] | PV, PVC, StorageClass, Dynamic Provisioning, Access Modes, Reclaim Policy |
 | [[kubernetes/explanation/helm-objects]] | Встроенные объекты шаблонов: Release, Values, Chart, Files, Capabilities, Template |
+| [[kubernetes/explanation/helm-functions]] | Функции шаблонов, pipelines, toYaml/nindent, _helpers.tpl, include, tpl |
 
 ## How-to (Практические руководства)
 

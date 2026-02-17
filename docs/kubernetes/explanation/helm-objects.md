@@ -8,6 +8,7 @@ related:
   - "[[kubernetes/how-to/helm-basics]]"
   - "[[kubernetes/reference/yaml-templates]]"
   - "[[kubernetes/how-to/recipes/web-app-deploy]]"
+  - "[[kubernetes/explanation/helm-functions]]"
 ---
 
 # Helm: встроенные объекты шаблонов

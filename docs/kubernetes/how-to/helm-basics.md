@@ -9,6 +9,7 @@ related:
   - "[[kubernetes/how-to/recipes/monitoring]]"
   - "[[kubernetes/reference/yaml-templates]]"
   - "[[kubernetes/explanation/helm-objects]]"
+  - "[[kubernetes/explanation/helm-functions]]"
 ---
 
 # Helm — Package Manager для Kubernetes
