@@ -6,6 +6,7 @@ related:
   - "[[linux/explanation/permissions-model]]"
   - "[[linux/reference/permissions-table]]"
   - "[[linux/how-to/recipes/initial-server-setup]]"
+  - "[[linux/explanation/user-files]]"
 ---
 
 # Управление пользователями и группами

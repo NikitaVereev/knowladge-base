@@ -9,6 +9,7 @@ related:
   - "[[linux/reference/cheatsheet]]"
   - "[[linux/how-to/manage-services]]"
   - "[[linux/explanation/shutdown]]"
+  - "[[linux/explanation/permissions-model]]"
 ---
 
 # Процессы и сервисы
