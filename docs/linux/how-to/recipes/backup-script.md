@@ -8,6 +8,7 @@ related:
   - "[[linux/how-to/monitor-system]]"
   - "[[linux/explanation/systemd]]"
   - "[[linux/reference/cheatsheet]]"
+  - "[[linux/how-to/schedule-tasks]]"
 ---
 
 # Рецепт: Бэкап и восстановление

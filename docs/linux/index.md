@@ -45,6 +45,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/how-to/monitor-system]] | top/htop, free, df, du, iostat, journalctl |
 | [[linux/how-to/harden-server]] | SSH, firewall, fail2ban, unattended-upgrades, audit |
 | [[linux/how-to/write-bash-scripts]] | Структура скрипта, set -euo, аргументы, логирование |
+| [[linux/how-to/schedule-tasks]] | cron (crontab, формат, окружение) и systemd timers (OnCalendar, Persistent, миграция) |
 
 ### Arch Linux
 
