@@ -6,6 +6,7 @@ related:
   - "[[linux/how-to/configure-network]]"
   - "[[linux/how-to/recipes/ssh-hardening]]"
   - "[[linux/how-to/recipes/initial-server-setup]]"
+  - "[[linux/explanation/networking]]"
 ---
 
 # Настройка Firewall

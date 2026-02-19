@@ -8,6 +8,7 @@ related:
   - "[[kubernetes/explanation/architecture]]"
   - "[[kubernetes/how-to/configure-networking]]"
   - "[[kubernetes/tutorials/04-ingress-and-tls]]"
+  - "[[linux/explanation/networking]]"
 ---
 
 # Сетевая модель Kubernetes

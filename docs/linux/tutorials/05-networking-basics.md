@@ -6,6 +6,7 @@ related:
   - "[[linux/tutorials/04-shell-and-scripting]]"
   - "[[linux/how-to/configure-network]]"
   - "[[linux/how-to/configure-firewall]]"
+  - "[[linux/explanation/networking]]"
 ---
 
 # Tutorial 05 — Основы сети

@@ -6,6 +6,7 @@ related:
   - "[[linux/tutorials/05-networking-basics]]"
   - "[[linux/how-to/configure-firewall]]"
   - "[[linux/how-to/recipes/initial-server-setup]]"
+  - "[[linux/explanation/networking]]"
 ---
 
 # Настройка сети
