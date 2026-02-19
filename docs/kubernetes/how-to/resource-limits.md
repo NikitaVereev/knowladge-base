@@ -8,6 +8,7 @@ related:
   - "[[kubernetes/how-to/manage-workloads]]"
   - "[[kubernetes/how-to/troubleshoot]]"
   - "[[kubernetes/reference/yaml-templates]]"
+  - "[[linux/explanation/cgroups]]"
 ---
 
 # Ресурсы и лимиты

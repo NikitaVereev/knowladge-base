@@ -19,6 +19,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/systemd]] | PID 1, units, targets, timers, journalctl, boot process |
 | [[linux/explanation/shutdown]] | Процесс завершения: targets, SIGTERM → SIGKILL, sync, umount, graceful shutdown |
 | [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, формат полей, процесс логина |
+| [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
 
 ## Tutorials (Пошаговые уроки)
 

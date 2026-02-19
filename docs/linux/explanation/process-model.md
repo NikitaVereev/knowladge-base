@@ -10,6 +10,7 @@ related:
   - "[[linux/how-to/manage-services]]"
   - "[[linux/explanation/shutdown]]"
   - "[[linux/explanation/permissions-model]]"
+  - "[[linux/explanation/cgroups]]"
 ---
 
 # Процессы и сервисы
