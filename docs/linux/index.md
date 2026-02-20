@@ -51,6 +51,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/how-to/harden-server]] | SSH, firewall, fail2ban, unattended-upgrades, audit |
 | [[linux/how-to/write-bash-scripts]] | Структура скрипта, set -euo, аргументы, логирование |
 | [[linux/how-to/schedule-tasks]] | cron (crontab, формат, окружение) и systemd timers (OnCalendar, Persistent, миграция) |
+| [[linux/how-to/linux-router]] | ip_forward, masquerade, FORWARD-правила, DHCP-сервер (dnsmasq) |
 
 ### Arch Linux
 

@@ -8,6 +8,7 @@ related:
   - "[[linux/how-to/recipes/initial-server-setup]]"
   - "[[linux/explanation/networking]]"
   - "[[linux/explanation/nat]]"
+  - "[[linux/how-to/linux-router]]"
 ---
 
 # Настройка Firewall
