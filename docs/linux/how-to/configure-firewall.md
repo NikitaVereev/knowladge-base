@@ -7,6 +7,7 @@ related:
   - "[[linux/how-to/recipes/ssh-hardening]]"
   - "[[linux/how-to/recipes/initial-server-setup]]"
   - "[[linux/explanation/networking]]"
+  - "[[linux/explanation/nat]]"
 ---
 
 # Настройка Firewall

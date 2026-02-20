@@ -13,6 +13,7 @@ related:
   - "[[kubernetes/explanation/networking]]"
   - "[[linux/explanation/dhcp]]"
   - "[[linux/explanation/ipv6]]"
+  - "[[linux/explanation/nat]]"
 ---
 
 # Основы сети
