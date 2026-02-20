@@ -21,6 +21,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, формат полей, процесс логина |
 | [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
 | [[linux/explanation/networking]] | Стек TCP/IP, уровни, IP/подсети/маршрутизация, TCP vs UDP, порты, путь пакета |
+| [[linux/explanation/dhcp]] | DORA, lease/продление, клиенты Linux, DHCP vs static, reservation |
 
 ## Tutorials (Пошаговые уроки)
 

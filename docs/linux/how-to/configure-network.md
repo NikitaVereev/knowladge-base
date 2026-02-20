@@ -7,6 +7,7 @@ related:
   - "[[linux/how-to/configure-firewall]]"
   - "[[linux/how-to/recipes/initial-server-setup]]"
   - "[[linux/explanation/networking]]"
+  - "[[linux/explanation/dhcp]]"
 ---
 
 # Настройка сети

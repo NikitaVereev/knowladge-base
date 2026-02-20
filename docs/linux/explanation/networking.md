@@ -11,6 +11,7 @@ related:
   - "[[linux/tutorials/05-networking-basics]]"
   - "[[linux/reference/cheatsheet]]"
   - "[[kubernetes/explanation/networking]]"
+  - "[[linux/explanation/dhcp]]"
 ---
 
 # Основы сети
