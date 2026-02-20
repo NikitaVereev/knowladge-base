@@ -22,6 +22,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
 | [[linux/explanation/networking]] | Стек TCP/IP, уровни, IP/подсети/маршрутизация, TCP vs UDP, порты, путь пакета |
 | [[linux/explanation/dhcp]] | DORA, lease/продление, клиенты Linux, DHCP vs static, reservation |
+| [[linux/explanation/ipv6]] | Автоконфигурация IPv6: link-local, SLAAC, DHCPv6, NDP, Privacy Extensions |
 
 ## Tutorials (Пошаговые уроки)
 

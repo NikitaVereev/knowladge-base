@@ -9,6 +9,7 @@ related:
   - "[[linux/explanation/networking]]"
   - "[[linux/how-to/configure-network]]"
   - "[[linux/tutorials/05-networking-basics]]"
+  - [[linux/explanation/ipv6]]
 ---
 
 # Протокол DHCP

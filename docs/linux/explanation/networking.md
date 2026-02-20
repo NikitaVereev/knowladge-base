@@ -12,6 +12,7 @@ related:
   - "[[linux/reference/cheatsheet]]"
   - "[[kubernetes/explanation/networking]]"
   - "[[linux/explanation/dhcp]]"
+  - "[[linux/explanation/ipv6]]"
 ---
 
 # Основы сети
