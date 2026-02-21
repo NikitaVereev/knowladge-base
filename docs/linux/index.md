@@ -24,6 +24,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/dhcp]] | DORA, lease/продление, клиенты Linux, DHCP vs static, reservation |
 | [[linux/explanation/ipv6]] | Автоконфигурация IPv6: link-local, SLAAC, DHCPv6, NDP, Privacy Extensions |
 | [[linux/explanation/nat]] | Частные сети (RFC 1918), NAT/masquerade, DNAT/port forwarding, conntrack |
+| [[linux/explanation/firewalls]] | Netfilter, iptables/nftables: таблицы, цепочки, путь пакета, стратегии фильтрации |
 
 ## Tutorials (Пошаговые уроки)
 

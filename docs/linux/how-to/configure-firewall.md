@@ -2,7 +2,11 @@
 title: "Настройка Firewall"
 type: how-to
 tags: [linux, firewall, ufw, iptables, nftables, security, ports]
+sources:
+  docs: "https://www.netfilter.org/documentation/"
+  book: "Внутреннее устройство Linux — Брайан Уорд, Глава 9.25"
 related:
+  - "[[linux/explanation/firewalls]]"
   - "[[linux/how-to/configure-network]]"
   - "[[linux/how-to/recipes/ssh-hardening]]"
   - "[[linux/how-to/recipes/initial-server-setup]]"

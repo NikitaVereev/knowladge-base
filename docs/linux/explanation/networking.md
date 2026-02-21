@@ -14,6 +14,7 @@ related:
   - "[[linux/explanation/dhcp]]"
   - "[[linux/explanation/ipv6]]"
   - "[[linux/explanation/nat]]"
+  - "[[linux/explanation/firewalls]]"
 ---
 
 # Основы сети
