@@ -16,6 +16,7 @@ related:
   - "[[linux/explanation/nat]]"
   - "[[linux/explanation/firewalls]]"
   - "[[linux/explanation/arp-ndp]]"
+  - "[[linux/explanation/wifi]]"
 ---
 
 # Основы сети

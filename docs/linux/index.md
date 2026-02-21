@@ -26,6 +26,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/nat]] | Частные сети (RFC 1918), NAT/masquerade, DNAT/port forwarding, conntrack |
 | [[linux/explanation/firewalls]] | Netfilter, iptables/nftables: таблицы, цепочки, путь пакета, стратегии фильтрации |
 | [[linux/explanation/arp-ndp]] | Ethernet и IP: ARP (IPv4), NDP (IPv6), MAC-резолвинг, gratuitous ARP, DAD |
+| [[linux/explanation/wifi]] | Wi-Fi: 802.11, CSMA/CA, каналы/частоты, WPA2/WPA3, iw, wpa_supplicant |
 
 ## Tutorials (Пошаговые уроки)
 
