@@ -15,6 +15,7 @@ related:
   - "[[linux/explanation/ipv6]]"
   - "[[linux/explanation/nat]]"
   - "[[linux/explanation/firewalls]]"
+  - "[[linux/explanation/arp-ndp]]"
 ---
 
 # Основы сети

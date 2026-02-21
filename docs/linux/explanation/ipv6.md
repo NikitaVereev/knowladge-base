@@ -9,6 +9,7 @@ related:
   - "[[linux/explanation/networking]]"
   - "[[linux/explanation/dhcp]]"
   - "[[linux/how-to/configure-network]]"
+  - "[[linux/explanation/arp-ndp]]"
 ---
 
 # Автоматическая настройка IPv6

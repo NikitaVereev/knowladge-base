@@ -25,6 +25,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/ipv6]] | Автоконфигурация IPv6: link-local, SLAAC, DHCPv6, NDP, Privacy Extensions |
 | [[linux/explanation/nat]] | Частные сети (RFC 1918), NAT/masquerade, DNAT/port forwarding, conntrack |
 | [[linux/explanation/firewalls]] | Netfilter, iptables/nftables: таблицы, цепочки, путь пакета, стратегии фильтрации |
+| [[linux/explanation/arp-ndp]] | Ethernet и IP: ARP (IPv4), NDP (IPv6), MAC-резолвинг, gratuitous ARP, DAD |
 
 ## Tutorials (Пошаговые уроки)
 
