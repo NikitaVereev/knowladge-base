@@ -10,22 +10,29 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 
 ## Explanation (Концепции)
 
+### Система
+
 | Документ | Описание |
 |----------|----------|
 | [[linux/explanation/distributions]] | Три семейства: Debian (apt), Red Hat (dnf), Arch (pacman). LTS vs Rolling |
 | [[linux/explanation/filesystem]] | FHS, «всё — файл», типы файлов, symlinks, скрытые файлы |
 | [[linux/explanation/permissions-model]] | rwx, chmod, chown, SUID/SGID/sticky, sudo |
+| [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, формат полей, процесс логина |
 | [[linux/explanation/process-model]] | PID, состояния, сигналы, nice, foreground/background, daemons |
+| [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
 | [[linux/explanation/systemd]] | PID 1, units, targets, timers, journalctl, boot process |
 | [[linux/explanation/shutdown]] | Процесс завершения: targets, SIGTERM → SIGKILL, sync, umount, graceful shutdown |
-| [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, формат полей, процесс логина |
-| [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
+
+### Сеть
+
+| Документ | Описание |
+|----------|----------|
 | [[linux/explanation/networking]] | Стек TCP/IP, уровни, IP/подсети/маршрутизация, TCP vs UDP, порты, путь пакета |
+| [[linux/explanation/arp-ndp]] | Ethernet и IP: ARP (IPv4), NDP (IPv6), MAC-резолвинг, gratuitous ARP, DAD |
 | [[linux/explanation/dhcp]] | DORA, lease/продление, клиенты Linux, DHCP vs static, reservation |
 | [[linux/explanation/ipv6]] | Автоконфигурация IPv6: link-local, SLAAC, DHCPv6, NDP, Privacy Extensions |
 | [[linux/explanation/nat]] | Частные сети (RFC 1918), NAT/masquerade, DNAT/port forwarding, conntrack |
 | [[linux/explanation/firewalls]] | Netfilter, iptables/nftables: таблицы, цепочки, путь пакета, стратегии фильтрации |
-| [[linux/explanation/arp-ndp]] | Ethernet и IP: ARP (IPv4), NDP (IPv6), MAC-резолвинг, gratuitous ARP, DAD |
 | [[linux/explanation/wifi]] | Wi-Fi: 802.11, CSMA/CA, каналы/частоты, WPA2/WPA3, iw, wpa_supplicant |
 
 ## Tutorials (Пошаговые уроки)
