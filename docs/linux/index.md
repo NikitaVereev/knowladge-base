@@ -58,6 +58,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/how-to/configure-firewall]] | ufw, iptables/nftables, открытие портов |
 | [[linux/how-to/manage-disks]] | fdisk, mkfs, mount, fstab, LVM, SMART |
 | [[linux/how-to/monitor-system]] | top/htop, free, df, du, iostat, journalctl |
+| [[linux/how-to/network-diagnostics]] | lsof, tcpdump, netcat, nmap — диагностика портов и трафика |
 | [[linux/how-to/harden-server]] | SSH, firewall, fail2ban, unattended-upgrades, audit |
 | [[linux/how-to/write-bash-scripts]] | Структура скрипта, set -euo, аргументы, логирование |
 | [[linux/how-to/schedule-tasks]] | cron (crontab, формат, окружение) и systemd timers (OnCalendar, Persistent, миграция) |
