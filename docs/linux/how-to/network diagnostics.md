@@ -302,6 +302,8 @@ nmap 10.1.2.2
 # 8800/tcp open   unknown
 # 9090/tcp open   zeus-admin
 
+> **Что такое rpcbind (порт 111)?** RPC (Remote Procedure Call) — система для вызова функций на удалённом сервере. `rpcbind` — посредник, который сопоставляет номера RPC-программ с TCP/UDP-портами. Нужен для NFS (сетевые файловые системы) и некоторых служб GNOME (FAM). Если NFS не используется — rpcbind можно отключить (`systemctl disable --now rpcbind`). Проверить активные RPC-службы: `rpcinfo -p localhost`.
+
 # Сканировать конкретные порты
 nmap -p 22,80,443,8080 10.0.1.5
 
