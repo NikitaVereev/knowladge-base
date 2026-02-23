@@ -34,6 +34,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/nat]] | Частные сети (RFC 1918), NAT/masquerade, DNAT/port forwarding, conntrack |
 | [[linux/explanation/firewalls]] | Netfilter, iptables/nftables: таблицы, цепочки, путь пакета, стратегии фильтрации |
 | [[linux/explanation/wifi]] | Wi-Fi: 802.11, CSMA/CA, каналы/частоты, WPA2/WPA3, iw, wpa_supplicant |
+| [[linux/explanation/sockets]] | Сетевые и Unix domain сокеты: граница kernel↔userspace, IPC, docker.sock, socket activation |
 
 ## Tutorials (Пошаговые уроки)
 
