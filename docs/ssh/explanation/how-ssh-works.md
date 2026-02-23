@@ -6,6 +6,7 @@ related:
   - "[[ssh/tutorials/01-getting-started]]"
   - "[[ssh/how-to/configure-client]]"
   - "[[ssh/how-to/harden-server]]"
+  - "[[ssh/explanation/ssh-service-architecture]]"
 ---
 
 # Как работает SSH

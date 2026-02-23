@@ -13,6 +13,7 @@ tags: [ssh, security, remote, keys, tunnels]
 | Документ | Описание |
 |----------|----------|
 | [[ssh/explanation/how-ssh-works]] | Протокол, шифрование, аутентификация по ключам, алгоритмы |
+| [[ssh/explanation/ssh-service-architecture]] | sshd как daemon, systemd, host keys, scp/sftp/rsync, не-Unix клиенты |
 
 ## Tutorials
 

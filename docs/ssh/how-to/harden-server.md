@@ -6,6 +6,7 @@ related:
   - "[[ssh/explanation/how-ssh-works]]"
   - "[[ssh/how-to/configure-client]]"
   - "[[linux/how-to/recipes/ssh-hardening]]"
+  - "[[ssh/explanation/ssh-service-architecture]]"
 ---
 
 # Hardening SSH-сервера
