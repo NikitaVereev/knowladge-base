@@ -1,11 +1,14 @@
 ---
 title: "Написание Bash-скриптов"
 type: how-to
-tags: [linux, bash, scripting, patterns, error-handling, arguments, arrays, debug]
+tags: [bash, scripting, patterns, error-handling, arguments, arrays, debug, mktemp, heredoc]
+sources:
+  book: "Внутреннее устройство Linux — Брайан Уорд, Глава 11"
 related:
+  - "[[bash/explanation/shell-internals]]"
+  - "[[bash/reference/text-processing]]"
   - "[[linux/tutorials/04-shell-and-scripting]]"
   - "[[linux/how-to/recipes/backup-script]]"
-  - "[[linux/reference/cheatsheet]]"
 ---
 
 # Написание Bash-скриптов
@@ -178,6 +181,120 @@ set +x                            # выключить
 shellcheck script.sh
 ```
 
+## Временные файлы (mktemp)
+
+Если скрипту нужен временный файл — не придумывайте имена вручную, используйте `mktemp`. Он гарантирует уникальность и создаёт файл атомарно.
+
+```bash
+# mktemp заменяет XXXXXX на случайные символы
+TMPFILE=$(mktemp /tmp/myapp.XXXXXX)
+echo "data" > "$TMPFILE"
+
+# Без аргумента — шаблон /tmp/tmp.XXXXXX
+TMPFILE=$(mktemp)
+
+# Временная директория
+TMPDIR=$(mktemp -d /tmp/build.XXXXXX)
+```
+
+**Всегда** комбинируйте с `trap` для очистки — иначе при Ctrl+C или ошибке файлы останутся:
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+TMPFILE1=$(mktemp /tmp/im1.XXXXXX)
+TMPFILE2=$(mktemp /tmp/im2.XXXXXX)
+trap "rm -f $TMPFILE1 $TMPFILE2; exit 1" INT TERM
+trap "rm -f $TMPFILE1 $TMPFILE2" EXIT
+
+# Пример: сравнить прерывания за 2 секунды
+cat /proc/interrupts > "$TMPFILE1"
+sleep 2
+cat /proc/interrupts > "$TMPFILE2"
+diff "$TMPFILE1" "$TMPFILE2"
+```
+
+> **Важно:** в обработчике `INT`/`TERM` нужен явный `exit`, иначе скрипт продолжит выполнение после обработки сигнала.
+
+## basename — имя файла из пути
+
+`basename` извлекает имя файла, отбрасывая путь. С двумя аргументами — дополнительно удаляет суффикс:
+
+```bash
+basename /usr/local/bin/myapp        # → myapp
+basename report.tar.gz .tar.gz       # → report
+basename /home/user/photo.jpg .jpg   # → photo
+
+# Практика: конвертация форматов
+for file in *.gif; do
+    [ -f "$file" ] || continue
+    base=$(basename "$file" .gif)
+    convert "$base.gif" "$base.png"
+    echo "Converted: $base.gif → $base.png"
+done
+```
+
+## Here-documents
+
+Когда нужно передать многострочный текст команде — вместо цепочки `echo` используйте here-document:
+
+```bash
+# <<MARKER — всё до строки MARKER идёт на stdin предыдущей команды
+cat <<EOF
+Отчёт от $(date)
+Сервер: $(hostname)
+Uptime: $(uptime -p)
+EOF
+```
+
+Переменные и подстановки `$()` внутри here-document **раскрываются**. Если нужен текст буквально (без подстановок) — заключите маркер в кавычки:
+
+```bash
+# Переменные НЕ раскрываются
+cat <<'EOF'
+Path is $PATH
+User is $(whoami)
+EOF
+# Выведет буквально: Path is $PATH
+```
+
+Практическое применение — генерация конфигов:
+
+```bash
+DB_HOST="10.0.1.5"
+DB_NAME="myapp"
+
+cat <<EOF > /etc/myapp/db.conf
+[database]
+host = $DB_HOST
+name = $DB_NAME
+pool_size = 10
+EOF
+```
+
+## Пользовательский ввод (read)
+
+`read` считывает строку из stdin в переменную:
+
+```bash
+# Простое подтверждение
+read -p "Удалить все логи? (y/N): " answer
+if [ "$answer" = "y" ]; then
+    rm -f /var/log/myapp/*.log
+    echo "Удалено"
+fi
+
+# Таймаут (не зависать вечно)
+read -t 10 -p "Продолжить? (y/N): " answer || answer="N"
+
+# Скрытый ввод (пароли)
+read -s -p "Password: " password
+echo  # перевод строки после скрытого ввода
+```
+
+> **Принцип:** `read` хорош для простых подтверждений вроде «Вы уверены?». Если обнаруживаете, что строите сложные формы ввода с валидацией — пора переходить на Python. Подробнее: [[bash/explanation/shell-internals]].
+
 ## Типичные ошибки
 
 | Ошибка | Правильно |
@@ -187,4 +304,6 @@ shellcheck script.sh
 | `cd dir && ...` без проверки | `cd dir || exit 1` |
 | Пробелы в `name = "val"` | `name="val"` (без пробелов) |
 | `echo $array` | `echo "${array[@]}"` |
+| `$(ls *.txt)` в цикле | `for f in *.txt` (glob безопаснее) |
 | Не используют shellcheck | `shellcheck script.sh` ловит 90% багов |
+| mktemp без trap | Всегда `trap cleanup EXIT` |
