@@ -1,14 +1,15 @@
 ---
 title: "Обработка текста: sed, awk, xargs"
 type: reference
-tags: [linux, sed, awk, xargs, find, text-processing, regex, scripting]
+tags: [bash, sed, awk, xargs, find, text-processing, regex, scripting]
 sources:
   docs: "https://man7.org/linux/man-pages/man1/sed.1.html"
   book: "Внутреннее устройство Linux — Брайан Уорд, Глава 11.10"
 related:
-  - "[[linux/reference/cheatsheet]]"
-  - "[[linux/how-to/write-bash-scripts]]"
+  - "[[bash/how-to/write-scripts]]"
+  - "[[bash/explanation/shell-internals]]"
   - "[[linux/tutorials/04-shell-and-scripting]]"
+  - "[[linux/reference/cheatsheet]]"
   - "[[linux/tutorials/03-filesystem-and-commands]]"
 ---
 
