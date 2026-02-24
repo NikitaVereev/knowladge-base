@@ -5,7 +5,7 @@ tags: [linux, tutorial, bash, scripting, shell, variables, loops, conditions, fu
 related:
   - "[[linux/tutorials/03-filesystem-and-commands]]"
   - "[[linux/tutorials/05-networking-basics]]"
-  - "[[linux/how-to/write-bash-scripts]]"
+  - "[[bash/how-to/write-scripts]]"
 ---
 
 # Tutorial 04 — Shell и скрипты
@@ -266,5 +266,7 @@ trap cleanup EXIT
 
 ## Что дальше
 
-→ [[linux/tutorials/05-networking-basics]] — сеть в Linux
-→ [[linux/how-to/write-bash-scripts]] — продвинутые паттерны
+- [[linux/tutorials/05-networking-basics]] — сеть в Linux
+- [[bash/how-to/write-scripts]] — продвинутые паттерны: getopts, mktemp, here-documents
+- [[bash/explanation/shell-internals]] — подоболочки, sourcing, exec
+- [[bash/reference/text-processing]] — sed, awk, xargs
