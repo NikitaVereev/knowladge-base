@@ -5,6 +5,7 @@ tags: [bash, scripting, patterns, error-handling, arguments, arrays, debug, mkte
 sources:
   book: "Внутреннее устройство Linux — Брайан Уорд, Глава 11"
 related:
+  - "[[bash/explanation/shell-language]]"
   - "[[bash/explanation/shell-internals]]"
   - "[[bash/reference/text-processing]]"
   - "[[linux/tutorials/04-shell-and-scripting]]"
@@ -123,6 +124,48 @@ while getopts "f:n:vh" opt; do
     esac
 done
 shift $((OPTIND - 1))             # оставшиеся — позиционные
+```
+
+### shift — сдвиг аргументов
+
+`shift` удаляет `$1` и сдвигает все аргументы: `$2` → `$1`, `$3` → `$2` и т.д. `$#` уменьшается на 1. Полезно для последовательной обработки:
+
+```bash
+# Обработать все аргументы в цикле
+while [ $# -gt 0 ]; do
+    echo "Processing: $1"
+    # ... делать что-то с $1 ...
+    shift
+done
+```
+
+### $@ — передать все аргументы другой команде
+
+`$@` разворачивается во все аргументы скрипта. Главный use case — **скрипт-обёртка**, который добавляет опции по умолчанию и пробрасывает остальное:
+
+```bash
+#!/bin/bash
+# gs-render.sh — ярлык для Ghostscript с дефолтными опциями
+gs -q -dBATCH -dNOPAUSE -dSAFER \
+   -sOutputFile=- -sDEVICE=pnmraw "$@"
+# Всё, что передано скрипту, уйдёт в gs после дефолтных флагов
+```
+
+> **`"$@"` с кавычками** — сохраняет каждый аргумент как отдельный элемент (даже с пробелами внутри). Без кавычек `$@` разобьёт `"my file.txt"` на два аргумента.
+
+### Диагностические сообщения: $0 + stderr
+
+Ошибки должны идти в stderr (`>&2`), а не в stdout — чтобы не мешать нормальному выводу скрипта:
+
+```bash
+error() {
+    echo "$0: $*" >&2       # $0 = имя скрипта, >&2 = stderr
+    exit 1
+}
+
+# Использование
+[ -f "$CONFIG" ] || error "config file not found: $CONFIG"
+# → ./deploy.sh: config file not found: /etc/app.conf
 ```
 
 ## Строки

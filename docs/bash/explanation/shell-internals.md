@@ -5,6 +5,7 @@ tags: [bash, shell, subshell, source, exec, internals, scripting]
 sources:
   book: "Внутреннее устройство Linux — Брайан Уорд, Глава 11.7–11.14"
 related:
+  - "[[bash/explanation/shell-language]]"
   - "[[bash/how-to/write-scripts]]"
   - "[[bash/reference/text-processing]]"
   - "[[linux/tutorials/04-shell-and-scripting]]"
