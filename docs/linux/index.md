@@ -15,6 +15,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | Документ | Описание |
 |----------|----------|
 | [[linux/explanation/distributions]] | Три семейства: Debian (apt), Red Hat (dnf), Arch (pacman). LTS vs Rolling |
+| [[linux/explanation/architecture]] | Три уровня: hardware → kernel → user space. Kernel mode vs user mode, изоляция, syscalls |
 | [[linux/explanation/filesystem]] | FHS, «всё — файл», типы файлов, symlinks, скрытые файлы |
 | [[linux/explanation/permissions-model]] | rwx, chmod, chown, SUID/SGID/sticky, sudo |
 | [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, формат полей, процесс логина |
