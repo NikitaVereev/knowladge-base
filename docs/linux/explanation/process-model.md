@@ -5,6 +5,7 @@ tags: [linux, processes, signals, pid, daemon, background, foreground, priority]
 sources:
   original: "_inbox/01-linux/01-core-concepts/03-processes-and-services.md"
 related:
+  - "[[linux/explanation/architecture]]"
   - "[[linux/explanation/systemd]]"
   - "[[linux/reference/cheatsheet]]"
   - "[[linux/how-to/manage-services]]"
@@ -31,6 +32,37 @@ pstree
 # systemd─┬─sshd───sshd───bash───vim
 #          ├─nginx───nginx
 #          └─postgres───postgres
+```
+
+### Как создаются процессы: fork() и exec()
+
+Все процессы в Linux (кроме init) создаются через два системных вызова:
+
+- **`fork()`** — ядро создаёт **почти идентичную копию** текущего процесса (тот же код, те же переменные, те же open files). Копия получает новый PID
+- **`exec(program)`** — ядро **заменяет** текущий процесс на новую программу. Старый код исчезает, загружается `program`
+
+Как это работает на практике — когда вы вводите `ls` в терминале:
+
+```
+bash (PID 100)
+    │
+    ├─ fork() → bash-копия (PID 101)   # ядро клонирует bash
+    │               │
+    │               └─ exec(ls)          # копия заменяется на ls
+    │                    │
+    │                    └─ ls работает, выводит результат, завершается
+    │
+    └─ bash ждёт (waitpid) → получает код возврата ls → показывает prompt
+```
+
+Именно поэтому переменные, заданные в дочернем скрипте, не видны в родительском shell — fork создаёт **копию**, а не общее пространство. Подробнее: [[bash/explanation/shell-internals]].
+
+```bash
+# Увидеть fork/exec в реальном времени
+strace -f -e trace=clone,execve bash -c 'ls /tmp' 2>&1 | grep -E 'clone|execve'
+# execve("/bin/bash", ...)         # bash запущен
+# clone(...)  = 12345              # fork → дочерний PID 12345
+# [pid 12345] execve("/bin/ls", ...) # дочерний процесс стал ls
 ```
 
 ## Просмотр процессов
