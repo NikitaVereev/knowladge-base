@@ -11,7 +11,7 @@ related:
 # Справочник: Команды Linux
 
 ## Навигация и файлы
- 
+
 ```bash
 pwd                          # текущая директория
 pwd -P                       # реальный путь (без символических ссылок)
@@ -109,6 +109,11 @@ chown -R user:group dir/     # рекурсивно
 useradd -m -s /bin/bash user # создать
 usermod -aG group user       # добавить в группу (с -a!)
 passwd user                  # сменить пароль
+chsh -s /bin/zsh             # сменить оболочку по умолчанию
+
+env                          # все переменные окружения
+export VAR="value"           # создать переменную окружения
+echo $PATH                   # каталоги поиска команд
 ```
 
 ## Процессы
@@ -178,5 +183,4 @@ uname -a                     # информация о системе
 cat /etc/os-release          # дистрибутив
 history                      # история команд
 alias ll='ls -la'            # создать alias
-echo $PATH                   # пути поиска команд
 ```
