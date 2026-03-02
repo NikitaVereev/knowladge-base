@@ -12,6 +12,7 @@ tags: [bash, shell, scripting, sed, awk, xargs]
 
 | Документ | Описание |
 |----------|----------|
+| [[bash/explanation/shell-environment]] | Переменные, PATH, dotfiles, readline |
 | [[bash/explanation/shell-language]] | Кавычки, подстановки, glob, коды возврата — как shell разбирает команду |
 | [[bash/explanation/shell-internals]] | Подоболочки, sourcing, exec — три модели запуска кода и их последствия |
 

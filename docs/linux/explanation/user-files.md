@@ -1,7 +1,7 @@
 ---
 title: "Файлы управления пользователями"
 type: explanation
-tags: [linux, users, passwd, shadow, group, nsswitch, uid, gid, authentication]
+tags: [linux, users, passwd, shadow, group, nsswitch, uid, gid, authentication, pam, getty]
 sources:
   book: "Внутреннее устройство Linux — Брайан Уорд, Глава 7.3"
   docs: "https://man7.org/linux/man-pages/man5/passwd.5.html"
@@ -284,6 +284,77 @@ grep john /etc/passwd
 ```
 
 > **Важно:** В современных системах этим занимается PAM (Pluggable Authentication Modules), а не программы напрямую. PAM добавляет гибкость: двухфакторная аутентификация, ограничения по времени, LDAP-бэкенды — всё без изменения login/sshd.
+
+## PAM (Pluggable Authentication Modules)
+
+PAM — модульная система аутентификации. Вместо того чтобы каждая программа (`login`, `sshd`, `su`, `sudo`) сама проверяла пароли, они вызывают PAM, а PAM делегирует проверку цепочке модулей.
+
+### Конфигурация
+
+```
+/etc/pam.d/           # конфигурации для каждой программы
+  ├── login           # для login
+  ├── sshd            # для SSH
+  ├── sudo            # для sudo
+  ├── su              # для su
+  └── common-auth     # общие правила аутентификации (Debian/Ubuntu)
+```
+
+Каждая строка конфига:
+
+```
+# тип        контроль   модуль                аргументы
+auth         required   pam_unix.so           nullok
+account      required   pam_nologin.so
+password     sufficient pam_unix.so           sha512 shadow
+session      required   pam_limits.so
+```
+
+| Тип | Что делает |
+|---|---|
+| `auth` | Проверка личности (пароль, ключ, OTP) |
+| `account` | Проверка доступа (не истёк ли аккаунт, время входа) |
+| `password` | Смена пароля (требования сложности) |
+| `session` | Действия при входе/выходе (запись в лог, монтирование home) |
+
+| Контроль | Поведение при ошибке |
+|---|---|
+| `required` | Отказ, но продолжить проверку остальных (для логирования) |
+| `requisite` | Немедленный отказ |
+| `sufficient` | Успех → пропустить остальные модули этого типа |
+| `optional` | Результат учитывается только если это единственный модуль |
+
+### Частые модули
+
+| Модуль | Назначение |
+|---|---|
+| `pam_unix.so` | Проверка пароля через /etc/shadow |
+| `pam_nologin.so` | Блокирует вход если существует `/etc/nologin` |
+| `pam_limits.so` | Применяет лимиты из `/etc/security/limits.conf` |
+| `pam_deny.so` | Всегда отказывает (для блокировки) |
+| `pam_permit.so` | Всегда разрешает (осторожно!) |
+| `pam_google_authenticator.so` | 2FA через Google Authenticator |
+
+## getty и login
+
+При текстовом входе в систему (консоль, не SSH) работает цепочка:
+
+```
+systemd → getty@tty1.service → agetty → показывает "login:" 
+  → пользователь вводит имя → login → PAM → проверка пароля → shell
+```
+
+`agetty` (alternative getty) — программа, которая открывает терминал и показывает приглашение `login:`. После ввода имени пользователя передаёт управление программе `login`, которая через PAM проверяет пароль и запускает shell.
+
+```bash
+# Активные getty (виртуальные терминалы)
+systemctl list-units 'getty@*'
+# getty@tty1.service  active  running  Getty on tty1
+
+# Переключение между виртуальными консолями
+# Ctrl+Alt+F1..F6 — текстовые
+# Ctrl+Alt+F7     — графическая (обычно)
+```
 
 ## Подводные камни
 
