@@ -16,12 +16,15 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 |----------|----------|
 | [[linux/explanation/distributions]] | Три семейства: Debian (apt), Red Hat (dnf), Arch (pacman). LTS vs Rolling |
 | [[linux/explanation/architecture]] | Три уровня: hardware → kernel → user space. Kernel mode vs user mode, изоляция, syscalls |
-| [[linux/explanation/filesystem]] | FHS, «всё — файл», типы файлов, symlinks, скрытые файлы |
+| [[linux/explanation/boot-process]] | BIOS/UEFI → GRUB → Kernel → initramfs → systemd. Конфигурация GRUB, параметры ядра, аварийная загрузка |
+| [[linux/explanation/filesystem]] | FHS, «всё — файл», типы файлов, symlinks, hard links, скрытые файлы, где ядро |
+| [[linux/explanation/devices-and-disks]] | Блочные/символьные устройства, udev, dd, разметка (MBR/GPT), ФС (ext4/XFS/Btrfs), mount/fstab, swap, LVM |
 | [[linux/explanation/permissions-model]] | rwx, chmod, chown, SUID/SGID/sticky, sudo |
-| [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, формат полей, процесс логина |
-| [[linux/explanation/process-model]] | PID, состояния, сигналы, nice, foreground/background, daemons |
+| [[linux/explanation/user-files]] | /etc/passwd, /etc/shadow, /etc/group, nsswitch.conf, PAM, getty/login |
+| [[linux/explanation/process-model]] | PID, fork/exec, сигналы, nice, daemons, мониторинг (top/lsof/strace), потоки, vmstat/iostat/iotop |
 | [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
-| [[linux/explanation/systemd]] | PID 1, units, targets, timers, journalctl, boot process |
+| [[linux/explanation/systemd]] | PID 1, units, зависимости (Wants/Requires/After), targets, timers, socket activation, SysV init |
+| [[linux/explanation/logging]] | journald vs syslog, journalctl (фильтры, приоритеты), /var/log/, logrotate, конфигурация |
 | [[linux/explanation/shutdown]] | Процесс завершения: targets, SIGTERM → SIGKILL, sync, umount, graceful shutdown |
 
 ### Сеть
@@ -96,10 +99,11 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 
 | Документ | Описание |
 |----------|----------|
-| [[linux/reference/cheatsheet]] | Команды: навигация, файлы, процессы, сеть, диски |
+| [[linux/reference/cheatsheet]] | Команды: навигация, файлы, процессы, сеть, диски, загрузка, время |
 | [[linux/reference/filesystem-hierarchy]] | FHS таблица: директории, важные файлы, спец. пути |
 | [[linux/reference/permissions-table]] | chmod числа, rwx для файлов/директорий, спец. биты |
 | [[linux/reference/systemd-reference]] | systemctl, journalctl, unit-файлы, targets, таймеры |
+| [[linux/reference/common-errors]] | Каталог типичных ошибок по подсистемам: FS, права, сеть, процессы, systemd, загрузка |
 
 ## Быстрый старт
 ```bash

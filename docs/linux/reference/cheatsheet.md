@@ -1,4 +1,4 @@
----
+ ---
 title: "Справочник: Команды Linux"
 type: reference
 tags: [linux, cheatsheet, commands, reference]
