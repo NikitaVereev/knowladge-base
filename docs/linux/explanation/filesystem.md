@@ -11,6 +11,7 @@ related:
   - "[[linux/explanation/permissions-model]]"
   - "[[linux/explanation/devices-and-disks]]"
   - "[[linux/explanation/boot-process]]"
+  - "[[linux/how-to/manage-disks]]"
 ---
 
 # Файловая система Linux
@@ -130,28 +131,6 @@ ls -li original.txt hardlink.txt
 | На директории | Да | Нет (запрещено, во избежание циклов) |
 | При удалении цели | «Висит» (broken) | Файл остаётся доступен через другое имя |
 | Свой inode | Да (отдельный) | Нет (общий с целью) |
-
-## Жёсткие ссылки (hard links)
-
-Жёсткая ссылка — дополнительное имя для того же inode (той же области данных на диске). В отличие от symlink, жёсткая ссылка неотличима от «оригинала» — это равноправные имена одного файла.
-
-```bash
-# Создать жёсткую ссылку
-ln file hardlink               # без -s = hard link
-
-# Проверить: одинаковый inode
-ls -li file hardlink
-# 12345 -rw-r--r-- 2 user user 100 ... file
-# 12345 -rw-r--r-- 2 user user 100 ... hardlink
-#   ↑ inode            ↑ счётчик ссылок = 2
-```
-
-| | Symlink | Hard link |
-|---|---|---|
-| Свой inode | Да (отдельный файл) | Нет (тот же inode, что и цель) |
-| Может указывать на каталог | Да | Нет (кроме `.` и `..` от ядра) |
-| Может пересекать ФС | Да | Нет (inode привязан к ФС) |
-| Цель удалена | Broken symlink | Файл остаётся (пока счётчик > 0) |
 | Видно что это ссылка | `l` в `ls -l` | Не видно (только по счётчику > 1) |
 
 Файл физически удаляется с диска только когда счётчик жёстких ссылок падает до 0 **и** ни один процесс не держит файл открытым.
@@ -189,35 +168,6 @@ ls -la ~           # показать скрытые файлы
 
 ```bash
 ls /lib/modules/$(uname -r)/
-# kernel/  modules.dep  modules.alias  ...
-
-# Загруженные модули
-lsmod
-
-# Загрузить/выгрузить модуль
-sudo modprobe module_name
-sudo modprobe -r module_name
-```
-
-Подробнее о загрузке: [[linux/explanation/boot-process]].
-
-## Где находится ядро
-
-Файлы ядра и загрузки расположены в `/boot/`:
-
-```bash
-ls /boot/
-# vmlinuz-6.8.0-45-generic          ← ядро (сжатый исполняемый файл)
-# initrd.img-6.8.0-45-generic       ← initramfs (временная FS для загрузки)
-# config-6.8.0-45-generic           ← параметры сборки ядра
-# System.map-6.8.0-45-generic       ← таблица символов ядра (для отладки)
-# grub/                             ← конфигурация GRUB
-```
-
-Загруженные модули ядра находятся в `/lib/modules/$(uname -r)/`:
-
-```bash
-ls /lib/modules/$(uname -r)/
 # kernel/    ← модули по категориям (drivers/, net/, fs/...)
 # modules.dep ← зависимости между модулями
 
@@ -228,7 +178,7 @@ sudo modprobe module_name          # загрузить модуль
 sudo modprobe -r module_name       # выгрузить модуль
 ```
 
-Подробнее о загрузке ядра: [[linux/explanation/boot-process]].
+Подробнее о загрузке: [[linux/explanation/boot-process]].
 
 ## Подводные камни
 
@@ -238,3 +188,10 @@ sudo modprobe -r module_name       # выгрузить модуль
 | «Нет доступа» | Проверить права: `ls -la`, использовать `sudo` для системных файлов |
 | «Диск заполнен» | `df -h` (свободное место), `du -sh /var/*` (что занимает) |
 | «Удалил важный файл» | В Linux нет корзины. Используйте бэкапы. `extundelete` — крайний случай |
+
+## Связанные материалы
+
+- [[linux/reference/filesystem-hierarchy]] — полная таблица FHS
+- [[linux/explanation/permissions-model]] — rwx, chmod, chown, SUID/SGID
+- [[linux/explanation/devices-and-disks]] — блочные устройства, mount, fstab, LVM
+- [[linux/how-to/manage-disks]] — практика: fdisk, mkfs, mount, LVM
