@@ -185,4 +185,6 @@ npm list
 
 ## Что дальше
 
-→ Подробнее: [[linux/how-to/arch/pacman-and-aur]] или [[linux/how-to/ubuntu/apt-and-ppa]]
+→ [[linux/tutorials/03-filesystem-and-commands]] — навигация, файлы, grep, find, пайпы
+
+→ Подробнее по пакетам: [[linux/how-to/arch/pacman-and-aur]] или [[linux/how-to/ubuntu/apt-and-ppa]]
