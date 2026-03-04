@@ -197,6 +197,8 @@ journalctl -b                # с последней загрузки
 journalctl --disk-usage      # сколько занимают логи
 ```
 
+Полный справочник journalctl, приоритеты, syslog, ротация логов: [[linux/explanation/logging]].
+
 ## Процесс загрузки
 
 ```
@@ -296,3 +298,11 @@ init=/bin/bash                 # жёсткий вариант (без systemd)
 | `ExecStart` с относительным путём | Только абсолютные пути! `/usr/bin/node`, не `node` |
 | Сервис постоянно перезапускается | `journalctl -u svc -n 50` → найти причину падения |
 | Логи занимают много места | `journalctl --vacuum-size=500M` |
+
+## Связанные материалы
+
+- [[linux/explanation/process-model]] — процессы, сигналы, fork/exec
+- [[linux/explanation/boot-process]] — GRUB, ядро, initramfs
+- [[linux/explanation/logging]] — journald и syslog подробно
+- [[linux/how-to/manage-services]] — практика: systemctl, создание юнитов
+- [[linux/reference/systemd-reference]] — справочник systemctl и journalctl
