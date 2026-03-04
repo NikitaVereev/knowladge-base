@@ -1,12 +1,17 @@
 ---
 title: "Справочник: Типичные ошибки Linux"
 type: reference
-tags: [linux, errors, troubleshooting, diagnostics, reference]
+tags:
+  - linux
+  - errors
+  - troubleshooting
+  - diagnostics
+  - reference
 sources:
-  book: "Внутреннее устройство Linux — Брайан Уорд"
+  book: Внутреннее устройство Linux — Брайан Уорд
 related:
   - "[[linux/reference/cheatsheet]]"
-  - "[[linux/how-to/network diagnostics]]"
+  - "[[network-diagnostics]]"
   - "[[linux/how-to/monitor-system]]"
   - "[[linux/explanation/permissions-model]]"
   - "[[linux/explanation/networking]]"
@@ -125,5 +130,5 @@ strace -o trace.log command        # системные вызовы
 ## Связанные материалы
 
 - [[linux/reference/cheatsheet]] — команды для диагностики
-- [[linux/how-to/network diagnostics]] — сетевая диагностика
+- [[network-diagnostics]] — сетевая диагностика
 - [[linux/how-to/monitor-system]] — мониторинг CPU, RAM, диска
