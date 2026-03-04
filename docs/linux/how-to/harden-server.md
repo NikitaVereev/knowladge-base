@@ -169,6 +169,32 @@ echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noo
 
 > **Принцип:** если сервис доступен по сети и передаёт что-либо чувствительное — он должен работать через TLS. Исключение: Unix domain sockets ([[linux/explanation/sockets]]) — данные не покидают машину.
 
+## MAC: SELinux и AppArmor
+
+Mandatory Access Control (MAC) — дополнительный уровень безопасности поверх стандартных rwx-прав. Даже если процесс запущен от root, MAC-политика может запретить ему доступ к определённым файлам или портам.
+
+| | SELinux | AppArmor |
+|---|---|---|
+| Дистрибутивы | RHEL, Fedora, CentOS | Ubuntu, Debian, SUSE |
+| Подход | Метки на файлах и процессах | Профили для программ (по путям) |
+| Сложность | Высокая | Средняя |
+
+```bash
+# SELinux
+getenforce                           # Enforcing / Permissive / Disabled
+sudo setenforce 0                    # временно Permissive (для диагностики)
+sudo ausearch -m avc -ts recent      # последние блокировки
+sudo sealert -a /var/log/audit/audit.log  # человекочитаемый отчёт
+
+# AppArmor
+sudo aa-status                       # статус всех профилей
+sudo aa-complain /usr/sbin/nginx     # режим обучения (логирует, не блокирует)
+sudo aa-enforce /usr/sbin/nginx      # режим блокировки
+cat /var/log/syslog | grep apparmor  # логи блокировок
+```
+
+> **Не отключайте MAC.** Если сервис не запускается из-за SELinux/AppArmor — переведите в permissive/complain, найдите причину в логах, исправьте политику. Отключение MAC — антипаттерн.
+
 ## Куда смотреть дальше
 
 Безопасность — область, где устаревшая информация опаснее отсутствия информации. Три источника, которые стоит знать:

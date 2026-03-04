@@ -11,6 +11,7 @@ related:
   - "[[linux/explanation/cgroups]]"
   - "[[linux/explanation/systemd]]"
   - "[[linux/tutorials/01-getting-started]]"
+  - "[[linux/how-to/monitor-system]]"
 ---
 
 # Архитектура Linux: три уровня системы

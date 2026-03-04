@@ -25,6 +25,7 @@ tags: [linux, os, kernel, administration, arch, ubuntu]
 | [[linux/explanation/cgroups]] | cgroups v1/v2, контроллеры (memory, cpu, io, pids), systemd slices, Docker/K8s |
 | [[linux/explanation/systemd]] | PID 1, units, зависимости (Wants/Requires/After), targets, timers, socket activation, SysV init |
 | [[linux/explanation/logging]] | journald vs syslog, journalctl (фильтры, приоритеты), /var/log/, logrotate, конфигурация |
+| [[linux/explanation/time-and-ntp]] | RTC vs system clock, UTC, часовые пояса, timedatectl, NTP, chrony |
 | [[linux/explanation/shutdown]] | Процесс завершения: targets, SIGTERM → SIGKILL, sync, umount, graceful shutdown |
 
 ### Сеть

@@ -6,6 +6,7 @@ related:
   - "[[linux/explanation/filesystem]]"
   - "[[linux/how-to/monitor-system]]"
   - "[[linux/reference/filesystem-hierarchy]]"
+  - "[[linux/explanation/devices-and-disks]]"
 ---
 
 # Управление дисками

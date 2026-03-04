@@ -8,6 +8,7 @@ related:
   - "[[linux/tutorials/02-package-management]]"
   - "[[linux/how-to/arch/pacman-and-aur]]"
   - "[[linux/how-to/ubuntu/apt-and-ppa]]"
+  - "[[linux/explanation/distributions]]"
 ---
 
 # Продвинутое управление пакетами

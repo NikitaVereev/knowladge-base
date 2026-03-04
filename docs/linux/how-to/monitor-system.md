@@ -6,8 +6,9 @@ sources:
   original: "_inbox/01-linux/03-system-administration/systemd/05-system-monitoring.md"
 related:
   - "[[linux/explanation/process-model]]"
+  - "[[linux/explanation/logging]]"
   - "[[linux/reference/cheatsheet]]"
-  - "[[linux/how-to/recipes/backup-script]]"
+  - "[[linux/reference/common-errors]]"
 ---
 
 # Мониторинг системы
@@ -145,6 +146,53 @@ systemctl --failed
 | Swap usage | `free -h` | 0 | > 50% (мало RAM) |
 | Failed services | `systemctl --failed` | 0 | > 0 |
 | I/O wait | `top` (wa%) | < 5% | > 20% |
+
+## Продвинутый мониторинг
+
+### vmstat — CPU, память, I/O одним взглядом
+
+```bash
+vmstat 1 5               # обновлять каждую 1 сек, 5 раз
+# procs ----memory---- --swap-- ---io--- -system-- ----cpu----
+#  r  b  swpd  free    si  so   bi   bo   in   cs  us sy id wa
+#  1  0     0  4096M    0   0    5   10  200  500  10  3 85  2
+```
+
+| Колонка | Значение | На что смотреть |
+|---|---|---|
+| `r` | Процессы в очереди на CPU | > nproc = перегрузка |
+| `b` | Процессы в D-state (blocked I/O) | > 0 постоянно = проблема с диском |
+| `si/so` | Swap in / swap out | > 0 постоянно = не хватает RAM |
+| `wa` | CPU: I/O wait % | > 10% = узкое место в дисковой подсистеме |
+
+### pidstat — статистика по конкретному процессу
+
+```bash
+# Требует пакет sysstat
+pidstat -p PID 1              # CPU каждую секунду
+pidstat -r -p PID 1           # память
+pidstat -d -p PID 1           # дисковый I/O
+```
+
+### lsof — кто использует файл/порт
+
+```bash
+lsof -p PID                   # все файлы процесса
+lsof +D /var/log/             # кто использует файлы в каталоге
+lsof -i :8080                 # кто слушает порт
+lsof /var/log/syslog          # кто держит файл открытым
+```
+
+### strace — трассировка системных вызовов
+
+Показывает что процесс «просит» у ядра — для диагностики «почему не работает».
+
+```bash
+strace command                 # трассировать запуск
+strace -p PID                  # подключиться к работающему процессу
+strace -e trace=open,read -p PID  # только файловые операции
+strace -c command              # сводка: какие syscalls сколько времени заняли
+```
 
 ## Типичные ошибки
 

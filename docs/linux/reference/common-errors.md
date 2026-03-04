@@ -130,5 +130,5 @@ strace -o trace.log command        # системные вызовы
 ## Связанные материалы
 
 - [[linux/reference/cheatsheet]] — команды для диагностики
-- [[network-diagnostics]] — сетевая диагностика
+- [[linux/how-to/network-diagnostics]] — сетевая диагностика
 - [[linux/how-to/monitor-system]] — мониторинг CPU, RAM, диска
