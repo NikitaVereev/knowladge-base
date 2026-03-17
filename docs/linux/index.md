@@ -1,7 +1,13 @@
 ---
-title: "Linux"
+title: Linux
 type: index
-tags: [linux, os, kernel, administration, arch, ubuntu]
+tags:
+  - linux
+  - os
+  - kernel
+  - administration
+  - arch
+  - ubuntu
 ---
 
 # Linux
